@@ -5,7 +5,6 @@
 \usetheme{UNC4} 
 %\usetheme{Warsaw}
 %\usefonttheme[stillsansserifsmall]{serif}
-
 \usepackage[english]{babel}
 \usepackage[latin1]{inputenc}
 %\usepackage[orientation=landscape, size=custom,width=142.24, height=91.44, scale=1.7]{beamerposter} % these match 56 by 36 inches -- ARIC template
