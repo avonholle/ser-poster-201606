@@ -1,0 +1,188 @@
+% unc-grad-poster-template.Rnw
+
+% COPIED this from https://gist.github.com/duncandoo/7809461
+\documentclass[final]{beamer}
+\usetheme{UNC4} 
+%\usetheme{Warsaw}
+%\usefonttheme[stillsansserifsmall]{serif}
+
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+%\usepackage[orientation=landscape, size=custom,width=142.24, height=91.44, scale=1.7]{beamerposter} % these match 56 by 36 inches -- ARIC template
+\usepackage[orientation=landscape, size=custom, width=152.3, height=91.44, scale=1.7]{beamerposter}  % this matches 60 by 36 inches.
+%\usepackage[orientation=landscape, size=a0, scale=1.5]{beamerposter}
+%\usepackage[numbers,sort]{natbib}
+\usepackage{amsmath}
+\usepackage{epstopdf}
+
+\usepackage{array,booktabs,tabularx}
+\usepackage[skip=0pt]{caption}
+\usepackage{setspace}
+\usepackage{graphicx,wrapfig,lipsum}
+\usepackage{pgf,tikz} % see http://codealamode.blogspot.com/2013/06/drawing-dags-latex-solution.html
+\usetikzlibrary{matrix, shapes, arrows, positioning, chains}
+%\usepackage[T1]{fontenc}
+%\usepackage{arev}
+  
+<<mainSettings, echo=FALSE, include=FALSE>>=
+opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE, fig.height=5)
+library(knitr)
+library(ggplot2)
+library(mi)
+library(xtable)
+library(reshape2)
+library(tables) 
+library(Hmisc)
+library(rms)
+library(tableone)
+#install.packages("mice")
+library(mice)
+@
+
+
+% This is based on the template at http://www-i6.informatik.rwth-aachen.de/~dreuw/latexbeamerposter.php
+
+%%%%%%%%%%%%%%%%%%%%% Edit this section with your info %%%%%%%%%%%%%%%%%%%%%%%
+% see http://tex.stackexchange.com/questions/9740/how-can-i-add-vertical-space-to-a-beamercolorbox-to-make-it-align-with-another-o
+\title{Title here  \rule[-1\normalbaselineskip]{0pt}{0pt}}
+%\title{\setlength\lineskip{20pt}Childhood BMI associated with low HDL-C levels in adolescence in a Chilean cohort}
+%\title{Childhood BMI associated with low HDL-C levels in adolescence in a Chilean cohort}
+\author[vonholle@email.unc.edu]{Put authors here}
+\institute{UNC}
+%\titlegraphic{logo_blackontransp_small.png} %this is the path to your logo
+\titlegraphic{unc-black.eps} %this is the path to your logo
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+\setbeamertemplate{caption}{\insertcaption}
+
+\begin{frame}
+\begin{columns}[T]
+
+% ---------------------------------------------------------%
+% Set up a column
+\begin{column}{0.19\textwidth}
+\begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
+\begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
+% fill each column with content
+\vfill
+
+  % fill each column with content
+\begin{block}{Introduction}
+
+Put intro here.
+
+\end{block}
+
+\begin{block}{Sample}
+
+
+  \end{block}
+  
+  \vfill
+
+
+\end{minipage}
+\end{beamercolorbox}
+\end{column}
+% ---------------------------------------------------------%
+% end the column
+
+
+
+
+% ---------------------------------------------------------%
+% Set up a column
+\begin{column}{0.30\textwidth}
+\begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
+\begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
+
+\begin{block}{Aim}
+\begin{itemize}
+\large 
+  \item Put my aim here.
+\end{itemize}
+  \end{block}
+
+\begin{block}{Method}
+
+{\large
+Put method here
+}
+
+  \end{block}
+
+\begin{block}{Descriptive Statistics}
+
+\vskip-1ex
+
+\end{block}
+
+ \end{minipage}
+\end{beamercolorbox}
+\end{column}
+% ---------------------------------------------------------%
+% end the column
+
+
+% ---------------------------------------------------------%
+% Set up a column
+\begin{column}{0.30\textwidth}
+\begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
+\begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
+
+\begin{block}{Results}
+
+Put results here.
+
+
+\end{block}
+
+\end{minipage}
+\end{beamercolorbox}
+\end{column}
+
+% ---------------------------------------------------------%
+% end the column
+
+
+% ---------------------------------------------------------%
+% Set up a column
+\begin{column}{0.18\textwidth}
+\begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
+\begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
+% fill each column with content
+\vfill
+
+\begin{block}{Summary}
+ Put summary here
+\end{block}
+
+\begin{block}{Future Efforts}
+  \large
+ Put future efforts here.
+
+\end{block}
+
+\begin{block}{Acknowledgements}
+
+Put acknowledgements here.
+
+\end{block}
+
+
+\vfill
+
+\end{minipage}
+\end{beamercolorbox}
+\end{column}
+% ---------------------------------------------------------%
+% end the column
+\end{columns}
+\vskip1ex
+
+\end{frame}
+\end{document}
