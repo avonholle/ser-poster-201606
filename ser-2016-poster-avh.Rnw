@@ -7,8 +7,8 @@
 %\usefonttheme[stillsansserifsmall]{serif}
 \usepackage[english]{babel}
 \usepackage[latin1]{inputenc}
-%\usepackage[orientation=landscape, size=custom,width=142.24, height=91.44, scale=1.7]{beamerposter} % these match 56 by 36 inches -- ARIC template
-\usepackage[orientation=landscape, size=custom, width=152.3, height=91.44, scale=1.7]{beamerposter}  % this matches 60 by 36 inches.
+
+\usepackage[orientation=landscape, size=custom, width=107, height=107, scale=1.7]{beamerposter}  % this matches 60 by 36 inches.
 %\usepackage[orientation=landscape, size=a0, scale=1.5]{beamerposter}
 %\usepackage[numbers,sort]{natbib}
 \usepackage{amsmath}
@@ -63,8 +63,9 @@ library(mice)
 
 % ---------------------------------------------------------%
 % Set up a column
-\begin{column}{0.19\textwidth}
+\begin{column}{0.30\textwidth}
 \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
+
 \begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
 % fill each column with content
 \vfill
@@ -83,21 +84,6 @@ Put intro here.
   
   \vfill
 
-
-\end{minipage}
-\end{beamercolorbox}
-\end{column}
-% ---------------------------------------------------------%
-% end the column
-
-
-
-
-% ---------------------------------------------------------%
-% Set up a column
-\begin{column}{0.30\textwidth}
-\begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
-\begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
 
 \begin{block}{Aim}
 \begin{itemize}
@@ -120,22 +106,26 @@ Put method here
 
 \end{block}
 
- \end{minipage}
+\end{minipage}
 \end{beamercolorbox}
 \end{column}
 % ---------------------------------------------------------%
 % end the column
 
-
 % ---------------------------------------------------------%
 % Set up a column
-\begin{column}{0.30\textwidth}
+\begin{column}{0.45\textwidth}
 \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
 \begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
 
 \begin{block}{Results}
 
-Put results here.
+
+\begin{figure}
+\centering
+\caption{\large Comparison of power, type-I error and bias.}
+\includegraphics{plot-power.png}
+\end{figure}
 
 
 \end{block}
@@ -150,7 +140,7 @@ Put results here.
 
 % ---------------------------------------------------------%
 % Set up a column
-\begin{column}{0.18\textwidth}
+\begin{column}{0.20\textwidth}
 \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
 \begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
 % fill each column with content
