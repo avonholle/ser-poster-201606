@@ -2,7 +2,7 @@
 
 % COPIED this from https://gist.github.com/duncandoo/7809461
 \documentclass[final]{beamer}
-\usetheme{UNC4} 
+\usetheme{UNC5} 
 %\usetheme{Warsaw}
 %\usefonttheme[stillsansserifsmall]{serif}
 \usepackage[english]{babel}
@@ -43,12 +43,9 @@ library(mice)
 
 %%%%%%%%%%%%%%%%%%%%% Edit this section with your info %%%%%%%%%%%%%%%%%%%%%%%
 % see http://tex.stackexchange.com/questions/9740/how-can-i-add-vertical-space-to-a-beamercolorbox-to-make-it-align-with-another-o
-\title{Title here \rule[-1\normalbaselineskip]{0pt}{0pt}}
-%\title{\setlength\lineskip{20pt}Childhood BMI associated with low HDL-C levels in adolescence in a Chilean cohort}
-%\title{Childhood BMI associated with low HDL-C levels in adolescence in a Chilean cohort}
-\author[vonholle@email.unc.edu]{Ann Von Holle, Kari North, Ran Tao, UNC, Chapel Hill, NC; \\ Estela Blanco, Sheila Gahagan, UCSD, San Diego, CA}
+\title{The utility of standardized or crude weight measures in modeling of postnatal growth trajectories: Are there differences?} 
+\author[vonholle@email.unc.edu]{Ann Von Holle, Kari North, Ran Tao, UNC, Chapel Hill, NC; Estela Blanco, Sheila Gahagan, UCSD, San Diego, CA}
 \institute{UNC}
-%\titlegraphic{logo_blackontransp_small.png} %this is the path to your logo
 \titlegraphic{unc-black.eps} %this is the path to your logo
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,17 +53,15 @@ library(mice)
 
 \begin{document}
 
-\setbeamertemplate{caption}{\insertcaption}
-
 \begin{frame}
 \begin{columns}[T]
 
 % ---------------------------------------------------------%
-% Set up a column
-\begin{column}{0.30\textwidth}
-\begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
+% Set up 1st column
+\begin{column}{0.25\textwidth}
 
-\begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
+\begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
+%\begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
 % fill each column with content
 \vfill
 
@@ -106,17 +101,17 @@ Put method here
 
 \end{block}
 
-\end{minipage}
+%\end{minipage}
 \end{beamercolorbox}
 \end{column}
 % ---------------------------------------------------------%
-% end the column
+% end the 1st column
 
 % ---------------------------------------------------------%
-% Set up a column
+% Set up 2nd column
 \begin{column}{0.45\textwidth}
 \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
-\begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
+%\begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
 
 \begin{block}{Results}
 
@@ -130,19 +125,19 @@ Put method here
 
 \end{block}
 
-\end{minipage}
+%\end{minipage}
 \end{beamercolorbox}
 \end{column}
 
 % ---------------------------------------------------------%
-% end the column
+% end the 2nd column
 
 
 % ---------------------------------------------------------%
-% Set up a column
-\begin{column}{0.20\textwidth}
+% Set up 3rd column
+\begin{column}{0.25\textwidth}
 \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
-\begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
+%\begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
 % fill each column with content
 \vfill
 
@@ -158,20 +153,19 @@ Put method here
 
 \begin{block}{Acknowledgements}
 
-{\large We thank all study participants for their generosity in time and support for this ongoing project.} {\small The Santiago Longitudinal Cohort Study was supported by NIH: NHLBI R01 HL088530 (PI: Gahagan) and NICHD R01 HD33487 (PIs: Gahagan and Lozoff)}.
+Put info here.
 
 \end{block}
 
-
 \vfill
 
-\end{minipage}
+%\end{minipage}
 \end{beamercolorbox}
 \end{column}
 % ---------------------------------------------------------%
-% end the column
+% end the 3rd column
+
 \end{columns}
-\vskip1ex
 
 \end{frame}
 \end{document}
