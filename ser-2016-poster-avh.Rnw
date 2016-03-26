@@ -1,28 +1,53 @@
 % ser-2016-poster-avh.Rnw
 
-% COPIED this from https://gist.github.com/duncandoo/7809461
+%---------------------------------------------------------------
+% Preamble
+% --------------------------------------------------------------
+%
+% NOTE: See rice-sample.tex written by Daina Chiba at Rice University for formatting and preamble code that I copied, http://ricebeamer.dynaman.net/
 \documentclass[final]{beamer}
-\usetheme{UNC5} 
-%\usetheme{Warsaw}
-%\usefonttheme[stillsansserifsmall]{serif}
+\usepackage[orientation=landscape, size=custom, width=107, height=107, scale=1.7]{beamerposter}  % this matches 42 by 42 inches.
+\mode<presentation>{\usetheme{UNC5}}
 \usepackage[english]{babel}
 \usepackage[latin1]{inputenc}
+\usepackage{bm}
+\usepackage{scrextend}
+\usepackage{caption}
+\usepackage{subcaption}
 
-\usepackage[orientation=landscape, size=custom, width=107, height=107, scale=1.7]{beamerposter}  % this matches 60 by 36 inches.
-%\usepackage[orientation=landscape, size=a0, scale=1.5]{beamerposter}
-%\usepackage[numbers,sort]{natbib}
-\usepackage{amsmath}
-\usepackage{epstopdf}
+%\usepackage{fontspec} % have to compile with XeLaTeX
+%\setmainfont{Arial}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault} % get something like Arial
+
+\usepackage{amsmath,amsthm, amssymb, latexsym}
 
 \usepackage{array,booktabs,tabularx}
-\usepackage[skip=0pt]{caption}
-\usepackage{setspace}
-\usepackage{graphicx,wrapfig,lipsum}
-\usepackage{pgf,tikz} % see http://codealamode.blogspot.com/2013/06/drawing-dags-latex-solution.html
-\usetikzlibrary{matrix, shapes, arrows, positioning, chains}
-%\usepackage[T1]{fontenc}
-%\usepackage{arev}
-  
+\newcolumntype{Z}{>{\centering\arraybackslash}X} % centered tabularx columns
+
+\usepackage{enumitem}
+\setlist[description]{style=nextline}
+\setlist[itemize,enumerate]{leftmargin=*,itemsep=0pt,parsep=0pt}
+
+% comment 
+\newcommand{\comment}[1]{}
+
+% (relative) path to the figures
+\graphicspath{{figs/}}
+
+\newlength{\columnheight}
+\setlength{\columnheight}{105cm}
+\newlength{\sepwid}
+\newlength{\onecolwid}
+\newlength{\twocolwid}
+\newlength{\threecolwid}
+\setlength{\sepwid}{0.024\paperwidth}
+\setlength{\onecolwid}{0.24\paperwidth}
+\setlength{\twocolwid}{0.45\paperwidth}
+\setlength{\threecolwid}{0.19\paperwidth}
+
+
 <<mainSettings, echo=FALSE, include=FALSE>>=
 opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE, fig.height=5)
 library(knitr)
@@ -41,91 +66,142 @@ library(mice)
 
 % This is based on the template at http://www-i6.informatik.rwth-aachen.de/~dreuw/latexbeamerposter.php
 
-%%%%%%%%%%%%%%%%%%%%% Edit this section with your info %%%%%%%%%%%%%%%%%%%%%%%
+% --------------------------------------------------------------------------------------% 
+% Title, author, date, etc.
+% --------------------------------------------------------------------------------------% 
 % see http://tex.stackexchange.com/questions/9740/how-can-i-add-vertical-space-to-a-beamercolorbox-to-make-it-align-with-another-o
 \title{The utility of standardized or crude weight measures in modeling of postnatal growth trajectories: Are there differences?} 
-\author[vonholle@email.unc.edu]{Ann Von Holle, Kari North, Ran Tao, UNC, Chapel Hill, NC; Estela Blanco, Sheila Gahagan, UCSD, San Diego, CA}
+\author[vonholle@email.unc.edu]{Ann Von Holle, Kari North, Ran Tao, UNC, Chapel Hill, NC; Sheila Gahagan, UCSD, San Diego, CA}
 \institute{UNC}
 \titlegraphic{unc-black.eps} %this is the path to your logo
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% -------------------------------------------------------------------------------------%
+% Contents
+% -------------------------------------------------------------------------------------%
 
 \begin{document}
 
-\begin{frame}
-\begin{columns}[T]
+\begin{frame}[t]
 
-% ---------------------------------------------------------%
-% Set up 1st column
-\begin{column}{0.25\textwidth}
+  %\begin{columns}[T]
+  \begin{columns}[t] % t instead of T or c means columns start at top
 
-\begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
-%\begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
-% fill each column with content
-\vfill
+    % ---------------------------------------------------------%
+    % Set up 1st column
+    % ---------------------------------------------------------%
+    \begin{column}{\onecolwid}
+    \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
+    % fill each column with content
+    \vskip2ex
+        % -----------------------------------------------------------
+        % 1-1 (first column's first block
+        % -----------------------------------------------------------
+        % fill each column with content
+        \begin{block}{Introduction}
+        
+          \small{Analyses of growth trajectories are expanding in tandem with the growing interest in life course epidemiology. Z-scores are a frequent choice when modeling weight growth trajectories to standardize the sample to usually what is the CDC reference or WHO standard populations. When used for cross-sectional data, Z-scores have advantages including linear sex- and age- independent measures of weight outcomes. However, there is no appropriate rationale to use Z-scores, or an equivalent such as percentiles, when studying weight change in infancy.}
+        \end{block}
+        \vskip1ex
+        % -----------------------------------------------------------
+        % 1-2
+        % -----------------------------------------------------------
+        \begin{block}{Samples}
+        \end{block}
+        \vskip1ex
+          
+          \vfill
+    
+        % -----------------------------------------------------------
+        % 1-3
+        % -----------------------------------------------------------
+        \begin{block}{Aim}
+            \small{Use simulations to assess differences in power, type I error measures, and coefficient estimates of weight change differences across three different outcome measures in child anthropometric measures: weight, weight Z-score and weight percentiles.}                  
+            \end{block}
+            \vskip1ex
+        
+        % -----------------------------------------------------------
+        % 1-4
+        % -----------------------------------------------------------
+        \begin{block}{Method}
+        
+        \small{
+        We simulated infant growth data using a Reed first order parametric model:
 
-  % fill each column with content
-\begin{block}{Introduction}
+$y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\frac{\beta_3}{t}$
 
-Put intro here.
+        After simulating data, three models were run on the data:
+        \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
+          \item[\textbf{Model 1}] \small $y_{ij} = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{group} + \beta_3 \cdot t \cdot \textrm{group} + e_{ij}$
+%Linear regression with first order term for time: 
+          \item[\textbf{Model 2}] \small $y_{ij} = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{group} + \beta_3 \cdot t \cdot \textrm{group} + \beta_4 \cdot t^2 + e_{ij}$
+%Linear regression with second order term for time: 
 
-\end{block}
+          \item[\textbf{Model 3}] 
+          \begin{itemize}
+            \item[]
+            \item[] \small $y_{ij} = \beta_0 \textrm{ + } \beta_1 \cdot \textrm{month.6} \textrm{ + } \beta_2 \cdot \textrm{group} \textrm{ + } \beta_3 \cdot \textrm{month.6} \cdot \textrm{group} \textrm{ + } e_{ij}$
+          \end{itemize}
+        \item[\textbf{Model Terms}]
+           %\begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
+           \begin{labeling}{month.6} %https://en.wikibooks.org/wiki/LaTeX/List_Structures
+            \item[]
+            \item[\bm{$y_{ij}$}] \small the outcome: weight, Z-score or percentile
+            \item[\textbf{group}]  \small a binary exposure factor
+            \item[\textbf{month.6}] \small a binary variable for time with 1=month 6 and 0=month 0
+            \item[\bm{$e_{ij}$}] \small error term with a autocorrelation structure, $rho$=0.5 and $\sigma$=0.75
+          %\end{itemize}
+          \end{labeling}
+    
+%ANOVA model (month 6 versus month 0): 
+        \end{itemize}
+        }
 
-\begin{block}{Sample}
+        \end{block}
+        \vskip1ex
+        
 
-
-  \end{block}
-  
-  \vfill
-
-
-\begin{block}{Aim}
-\begin{itemize}
-\large 
-  \item Put my aim here.
-\end{itemize}
-  \end{block}
-
-\begin{block}{Method}
-
-{\large
-Put method here
-}
-
-  \end{block}
-
-\begin{block}{Descriptive Statistics}
-
-\vskip-1ex
-
-\end{block}
-
-%\end{minipage}
-\end{beamercolorbox}
-\end{column}
-% ---------------------------------------------------------%
-% end the 1st column
+  \end{beamercolorbox}
+  \end{column}
+    % ---------------------------------------------------------%
+    % end the 1st column
+    % ---------------------------------------------------------%
 
 % ---------------------------------------------------------%
 % Set up 2nd column
-\begin{column}{0.45\textwidth}
+% ---------------------------------------------------------%
+
+\begin{column}{\twocolwid}
 \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
-%\begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
 
-\begin{block}{Results}
+        % -----------------------------------------------------------
+        % 2-1
+        % -----------------------------------------------------------
+        \begin{block}{Results}
 
+          \begin{figure}
+          \caption{Simulated growth curves: weight and Z-score outcomes}
+          \centering
+          \includegraphics{sim-female.png}
+%             \begin{subfigure}[b]{0.5\textwidth}
+%             \includegraphics[width=0.5\textwidth]{sim-female-baselines.png} % see plot.growth-baselines-copy.R file for code to create image
+%             \end{subfigure}
+%  ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+%       %(or a blank line to force the subfigure onto a new line)            
+%             \begin{subfigure}[b]{0.5\textwidth}
+%             \centering
+%             \includegraphics[width=0.5\textwidth]{sim-female-Z-baselines.png}  % see plot.growth-baselines-copy.R file for code to create image
+%             \end{subfigure}
+          \end{figure}
+          
+  
+          \begin{figure}
+          \centering
+          \caption{Comparison of power, type-I error and bias.}
+          \includegraphics{plot-power.png} % see poster-results.Rmd file for code to create image
+          \end{figure}
+          
+        \end{block}
 
-\begin{figure}
-\centering
-\caption{\large Comparison of power, type-I error and bias.}
-\includegraphics{plot-power.png}
-\end{figure}
-
-
-\end{block}
-
-%\end{minipage}
 \end{beamercolorbox}
 \end{column}
 
@@ -135,35 +211,35 @@ Put method here
 
 % ---------------------------------------------------------%
 % Set up 3rd column
-\begin{column}{0.25\textwidth}
+% ---------------------------------------------------------%
+
+\begin{column}{\onecolwid}
 \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
-%\begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
-% fill each column with content
-\vfill
-
-\begin{block}{Summary}
- Put summary here
-\end{block}
-
-\begin{block}{Future Efforts}
-  \large
- Put future efforts here.
-
-\end{block}
-
-\begin{block}{Acknowledgements}
-
-Put info here.
-
-\end{block}
 
 \vfill
-
-%\end{minipage}
+      % -----------------------------------------------------------
+        % 3-1
+        % -----------------------------------------------------------
+        \begin{block}{Summary}
+           Put summary here
+        \end{block}
+        
+        % -----------------------------------------------------------
+        % 3-2
+        % -----------------------------------------------------------
+        \begin{block}{Future Efforts}
+            \large
+          Put future efforts here.
+        
+        \end{block}
+        
+        \vfill
+        
 \end{beamercolorbox}
 \end{column}
 % ---------------------------------------------------------%
 % end the 3rd column
+% ---------------------------------------------------------%
 
 \end{columns}
 

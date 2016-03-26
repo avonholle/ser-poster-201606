@@ -14,6 +14,27 @@ Will provide a mock-up of figures meant for poster (before putting in .Rnw file)
 Based on analyses for the manuscript currently titled, "The utility of standardized or crude weight measures in modeling of postnatal growth trajectories: Are there differences?". The aim of the paper is to compare growth trajectory models with three different outcomes: weight, weight Z-score and weight percentile. This topic has been discussed in the literature [@berkey_adiposity_2007,@cole_what_2005], but not for the infancy time period.
 
 
+---
+
+### Models used for evaluation across the three outcomes:
+
+#### Model 1: Linear regression with first order term for time.
+
+$y_{ij} = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{group} + \beta_3 \cdot t \cdot \textrm{group} + e_{ij}$
+
+#### Model 2: Linear regression with second order term for time.
+
+$y_{ij} = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{group} + \beta_3 \cdot t \cdot \textrm{group} + \beta_4 \cdot t^2 + e_{ij}$
+
+
+#### Model 3: ANOVA model (month 6 versus month 0).
+
+$y_{ij} = \beta_0 + \beta_1 \cdot month.6 + \beta_2 \cdot \textrm{group} + \beta_3 \cdot month.6 \cdot \textrm{group} + e_{ij}$
+
+$month.6$ is a binary variable with 1=month 6 and 0=month 0.
+
+
+
 ```{r global_options, include=F}
 # see http://kbroman.org/knitr_knutshell/pages/Rmarkdown.html
 knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/',
@@ -26,17 +47,23 @@ knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/',
 library(knitr)
 library(reshape2)
 library(ggplot2)
-library(car)
+library(car) 
 library(plyr)
 library(tables)
 library(data.table)
 library(htmlTable)
 require(ztable)
+require(Rmisc)
 
+library(gridExtra)
+library(grid)
 ```
 
 ```{r read1}
-setwd("C:/Users/vonholle/Dropbox/unc.grad.school/my-papers/ms-201505/programs")
+#setwd("C:/Users/vonholle/Dropbox/unc.grad.school/my-papers/ms-201505/programs")
+setwd("~/")
+setwd("../")
+setwd("./Dropbox/unc.grad.school/my-papers/ms-201505/programs")
 
 # Read in data and get power and nominal alpha
 # ................................................
@@ -96,27 +123,22 @@ head(dat.2.cont)
 
 # Get median of sample regresssion interaction coefficients and sd of sample regression int. coefficients
 # ..........................................
-dat.2a = vals.b.dt[,lapply(.SD, function(x) {paste(formatC( round(median(x, na.rm=T),3), format="f", digits=3), 
-                                                   " (", 
-                                                   formatC( round(IQR(x, na.rm=T),3), format="f", digits=3),
-                                                   ")", sep="")}),
+dat.2a = vals.b.dt[,lapply(.SD, function(x) {median(x, na.rm=T)}),
                   by = c("sigval","study", "gend", "basevals"),
                   .SDcols=c(19:36,57,58)]
 names(dat.2a)
 head(dat.2a)
 ```
 
-<!-- Note: this next part takes a long time. -->
-
 ```{r handle3}
 # More data handling
 # .........................................
 
 studies = c("Portugal", "Italy", "Chile") # fix study labels for formatting below.
-evals = c("Unequal baseline|+ slope",
-          "Equal baseline|+ slope",
-          "Equal baseline|- slope",
-          "Unequal baseline|- slope")
+evals = c("Unequal baseline \n + slope",
+          "Equal baseline \n + slope",
+          "Equal baseline \n - slope",
+          "Unequal baseline \n - slope")
 
 # Combine the means with alpha and power vals
 dat.both = cbind(data.frame(dat.1), data.frame(dat.2a[,5:24, with=F]))
@@ -128,12 +150,6 @@ names(dat.both)
 
 dat.long = melt(dat.both[,c(1:44)], 
                 id.vars=c("sigval","study", "gend", "basevals"))
-
-colnames(vals.b.dt)
-vals.b.dt.long = melt(vals.b.dt[,c(19:36,57,58,62:65), with=FALSE],
-                id.vars=c("sigval","study", "gend", "basevals"))
-
-head(vals.b.dt.long)                      
 
 names(dat.long)
 head(dat.long)
@@ -161,11 +177,7 @@ within(df, {
   population.f = factor(study, labels=studies) 
 #  population.f = factor(study, labels=c("Portugal")) 
    sigma.f = factor(sigval, labels=c("0.50"))
-#   e.f = factor(e, labels=c("0.50 and 0.05", 
-#                            "-0.50 and 0.05", 
-#                            "0.4 and -0.05", 
-#                            "-1.0 and -0.05"))
-    e.f = factor(basevals, labels=evals)
+   e.f = factor(basevals, labels=evals)
 })
 }
 
@@ -174,26 +186,9 @@ names(dat.long)
 sapply(dat.long[,c(1,2,3,4)], function(x) levels(factor(x)))
 
 dat.long=handle.1(dat.long)
-vals.b.dt.long = handle.1(vals.b.dt.long)
-head(vals.b.dt.long)
 
 names(dat.long)
 nrow(dat.long)
-
-dat.2.cont.long = melt(dat.2.cont, 
-                id.vars=c("sigval","study", "gend", "basevals", "measure"))
-head(dat.2.cont.long)
-
-dat.2.cont.long=handle.1(dat.2.cont.long)
-head(dat.2.cont.long)
-names(dat.2.cont.long)
-
-
-names(dat.long)
-sapply(dat.long[,names(dat.long) %in% c("e.f",
-                                        "power",
-                                        "model")], 
-       function(x) levels(factor(x)))
 
 # reorder
 dat.long$power.f = factor(dat.long$power, levels=c("Power", 
@@ -208,299 +203,6 @@ dat.long[dat.long$model=="Source", ]
 
 ```
 
-```{r tables1}
-# Make summary tables with results
-# ....................................
-
-# Note: there should be no percentile or z for Source. 
-# figure out how to put na or missing in the tabular for this
-
-# Power
-dat.long$type.f = factor(dat.long$type)
-dat.long$model.f = factor(dat.long$model)
-levels(dat.long$model.f)
-levels(dat.long$type.f)
-
-power = tabular(Heading("Parameters")*e.f*Heading("Sample")*Heading("Sample")*population.f*Heading()*Factor(model)  ~ Format(digits=1)*Heading()*Factor(type)*Heading()*identity*Heading()*as.numeric(value) ,  data=dat.long[dat.long$power.f=="Power" & dat.long$alt==1,])
-# charater values will not show missing -- need to convert to numeric
-
-
-# Type I error
-  t1e = tabular(Heading("Parameters")*e.f*Heading("Sample")*Heading("Sample")*population.f*Heading()*Factor(model) ~ Heading()*Factor(type)*Heading()*identity*Heading()*as.numeric(value),
-          data=na.omit(dat.long[dat.long$power.f=="Type I error" & dat.long$alt==0,]))
-
-# Medians #note: have to be careful with missing values for 'Source' model and a character term -- the table is not population correctly.
-medians = tabular(Heading("Parameters")*e.f*Heading("Sample")*population.f ~ 
-          Heading()*Factor(model)*Heading()*Factor(type)*Heading()*identity*Heading()*value,
-         data=na.omit(dat.long[dat.long$power.f=="Interaction coefficient: median (IQR)^a" & dat.long$alt==1 & !(dat.long$model=="Source"),])
-)
-
-names(dat.2.cont.long)
-head(dat.2.cont.long)
-
-medians.2 =
-  tabular(Heading("Parameters")*e.f*Heading("Sample")*population.f*Heading("Model")*Factor(model) ~  
-          Format(digits=3)*Heading()*Factor(type)*Heading()*value*(median+IQR),
-         data = na.omit(vals.b.dt.long[vals.b.dt.long$val.1==1 & vals.b.dt.long$alt==1 & !(vals.b.dt.long$model=="Source"),]))
-
-```
-
-### Background model info
-
-#### Source model: Reed first order model with crude weight outcome, regression with continuous time term
-
-Weight values were simulated with a Reed first order growth model.
-
-$y_{ij} = \beta_0 + \beta_1 \cdot t^* + \beta_2 \cdot \textrm{ln}(t^*) + \displaystyle\frac{\beta_3}{t^*} + \beta_4 \cdot \textrm{group} + \beta_5 \cdot t^* \cdot \textrm{group} + e_{ij}$
-
-$t^{*} = (t+9)/9$, where $t$ is time (months).
-
-This model has been found to have a good fit compared to other models [@hauspie_methods_2004] and an advantage in its linearity in terms.
-
-$group$ is a binary variable indicating either exposed ($group$=1) or unexposed ($group$=0).
-
-$y_{ij}$ is the weight (kg) for infant $i$ at time $j$ (months 0, 1, 2, 3, 4, 5 and 6).
-
-The covariance structure for $e_{ij}$ is autoregressive of order 1 (AR(1)). All time points are equally spaced in this simulation -- one month apart. $\rho$=0.50 and $\sigma$=0.50.
-
-
-Parameter estimates representing Portual, Italy and Chile were from a paper published in 2014 [@pizzi_modelling_2014].
-
-For Portugal the $\beta_0, \beta_1, \beta_2, \beta_3$ values are $\beta_0$=9.72, $\beta_1$=0.79, $\beta_2$=1.33, $\beta_3$=-7.49.
-
-The $\beta_4$ (main effect for $group$) and $\beta_5$ (interaction effect for $group$ and time $t$) there were four different combinations of $\beta_4$ and $\beta_5$ values evaluated in the simulations. Two had a positive interaction term, 0.50, and two had a negative interaction term, -0.50. Within these groups the main effect was set at a value that allowed equal birth weight at baseline and different weight at baseline, either zero or same value of the interaction term, respectively.
-
-
-```{r tables2}
-# Make table of beta4 and beta5 values
-base.int = matrix(c(1, 0, 0.50,
-                      2, -0.50, 0.50,
-                      3, 0.50, -0.50,
-                      4, 0, -0.50), # beta4 (first col) and beta5 (2nd col) set so that exposure groups have similar baseline weight values
-                    nrow=4, byrow=T) # changed from 0.04 to 0.05
-
-base.int = as.data.frame(base.int)
-base.int$V1.f = factor(base.int$V1, 
-                       labels = c("Baseline+, interaction+",
-                                               "Baseline=, interaction+",
-                                               "Baseline=, interaction-",
-                                               "Baseline-, interaction-"))
-colnames(base.int) = c("type", "$\\beta_4$", "$\\beta_5$", "Type")
-base.int
-```
-
----
-
-### Models used for evaluation across the three outcomes:
-
-#### Model 1: Linear regression with first order term for time.
-
-$y_{ij} = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{group} + \beta_3 \cdot t \cdot \textrm{group} + e_{ij}$
-
-#### Model 2: Linear regression with second order term for time.
-
-$y_{ij} = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{group} + \beta_3 \cdot t \cdot \textrm{group} + \beta_4 \cdot t^2 + e_{ij}$
-
-
-#### Model 3: ANOVA model (month 6 versus month 0).
-
-$y_{ij} = \beta_0 + \beta_1 \cdot month.6 + \beta_2 \cdot \textrm{group} + \beta_3 \cdot month.6 \cdot \textrm{group} + e_{ij}$
-
-$month.6$ is a binary variable with 1=month 6 and 0=month 0.
-
----
-
-## Simulation results
-
-----
-
-
-```{r sim1}
-colnames(vals.b.dt)
-dim(vals.b.dt)
-head(vals.b.dt)
-groups = c("sigval", "study", "gend", "basevals")
-df.sub = vals.b.dt[,colnames(vals.b.dt) %in% groups, with=F]
-ct.group = nrow(na.omit(unique(df.sub)))
-
-ct = nrow(vals.b.dt)/ct.group
-
-```
-
-Number of iterations: `r ct`
-
-### Tables with power, type I error and median parameter estimates from simulations
-
-####Power
-
-```{r power2, results='asis'}
-power.dat = as.matrix(power)
-
-# make a vector with the rownames with appropriate number of spaces between countries.
-study.list = lapply(studies, function(x) {
-  paste(rep(c(x, rep("",3)),1)) # There are four models per study
-  })
-study.vec = rep(do.call(c, study.list), 4) # the four models per study are nested wihtin four different param groups
-
-# This row label vector excludes the Source row
-# .........................................
-# make a vector with the rownames with appropriate number of spaces between countries.
-study.list.2 = lapply(studies, function(x) {
-  paste(rep(c(x, rep("",2)),1)) # There are four models per study
-  })
-study.vec.2 = rep(do.call(c, study.list.2), 4) # the four models per study are nested wihtin four different param groups
-
-
-htmlTable(power.dat[2:49,3:6],
-            header =  c("Model",c("Percentile",
-                                      "Weight",
-                                      "Z-score")),
-            rnames = study.vec,
-            rgroup = evals,
-            n.rgroup = c(12,12,12,12),
-            cgroup = c("","Outcome"),
-            n.cgroup = c(1,3), 
-#            caption="Power estimates for $\\beta_5^a$.",
-            caption="Power estimates for interaction term",
-            tfoot="Note: Model 1: first order time, Model 2: second order time, Model 3: ANOVA (month 6 vs month 0)")
-
-```
-
-
-```{r powerplot}
-head(power.dat[2:49,3:6])
-head(power)
-head(dat.long[dat.long$power.f=="Power" & dat.long$alt==1,])
-#"Interaction coefficient: median (IQR)^a"
-names(dat.long)
-table(dat.long$power)
-
-#power.1 = dat.long[dat.long$power.f=="Power" & dat.long$alt==1 & dat.long$study==5, c("sigval", "study", "basevals",  "value", "e.f", "population.f", "gender.f", "power.f", "model.f", "type.f")]
-
-#dat.long$alt==1 & 
-power.1 = dat.long[dat.long$study==5, c("sigval", "study", "basevals",  "value", "e.f", "population.f", "gender.f", "power.f", "model.f", "type.f")]
-
-power.1.cc = power.1[complete.cases(power.1),]
-
-head(power.1.cc)
-
-table(power.1.cc$power.f)
-table(power.1.cc$type.f)
-class(power.1.cc$value)
-power.1.cc$value = as.numeric(power.1.cc$value)
-
-# STOPPED here ----------?????????????----------- Need to combine facets with power, type 1 and bias all together?
-power.1.cc.p = power.1.cc[power.1.cc$power.f=="Power",]
-
-
-p.1 = ggplot(aes(x=model.f, y=value, colour=type.f), data=power.1.cc.p) +
-  geom_point(size=6) +
-  facet_grid(e.f ~.) + 
-  theme_bw(base_size = 22) +
-  xlab("Model") +
-  ylab("Power") +
-#  scale_y_continuous(breaks=pretty(power.1.cc$value, n = 6)) +
-  guides(colour = guide_legend(title = "Outcome"))
-
-p.1
-
-# LEFT OFF here ?????!!!!??? use code below to add
-# bias estimates. Can't figure out where htey are coming from.... ADD all of this down below the info.1 part... then combine the three panels into 1
-
-info.1.sub=info.1[info.1$type=="Bias" & population.f=="Chile",]
-head(info.1.sub)
-
-p.2 = ggplot(aes(x=model, y=value, colour=outcome), data=info.1.sub) +
-  geom_point(size=6) +
-  facet_grid(e.f ~., scales="free") + 
-  theme_bw(base_size = 22) +
-  xlab("Model") +
-  ylab("Bias") +
-#  scale_y_continuous(breaks=pretty(power.1.cc$value, n = 6)) +
-  guides(colour = guide_legend(title = "Outcome"))
-
-p.2
-
-getwd()
-
-setwd("C:/Users/vonholle/Dropbox/unc.grad.school/presentations/Epi-congress-of-americas-2016/ser-poster-201606")
-
-# export to png TO GO INTO THE POSTER, MADE AT SER-2016-POSTER-AVH.RNW
-png("plot-power.png", width=3600, height=3600, res=300)
-p.1
-dev.off()
-
-```
-
----
-
-####Type I error
-
-
-```{r t1}
-html(t1e, rmarkdown=T, options=htmloptions(head=FALSE, table=TRUE, pad=FALSE, justification="r"))
-#table_options(save)
-#close(con)
-#browseURL(f)
-```
-
-
-
-```{r t1-2, results='asis'}
-t1e.dat = as.matrix(t1e)
-#t1e.dat[4:10,4:6]
-
-  htmlTable(t1e.dat[2:49,3:6],
-            header =  c("Model",c("Percentile",
-                                      "Weight",
-                                      "Z-score")),
-            rnames = study.vec,
-            rgroup = evals,
-            n.rgroup = c(12,12,12,12),
-            
-#            rnames = paste(rep(c("Portugal", rep("",3)),2)),
-#            rgroup = c("Equal baseline", 
-#                       "Unequal baseline"),
-#            n.rgroup = c(4,4),
-            cgroup = c("","Outcome"),
-            n.cgroup = c(1,3), 
-            caption="Type I error estimates for interaction term.",
-            tfoot="Note: Model 1: first order time, Model 2: second order time, Model 3: ANOVA (month 6 vs month 0)")
-```
-
----
-
-#### Medians
-
-```{r median1}
-
-html(medians.2, rmarkdown=T, options=htmloptions(head=FALSE, table=TRUE, pad=FALSE, justification="c"))
-```
-
-```{r median2, results='asis'}
-med.dat = as.matrix(medians.2)
-
-  htmlTable(med.dat[3:38,3:9],
-            header =  c("Model",rep(c("median", "IQR"),3)),
-
-            rnames = study.vec.2,
-            rgroup = evals,
-            n.rgroup = rep(9,4),
-            
-#             rnames = paste(rep(c("Portugal" , rep("",3)),2)),
-#             rgroup = c("Equal baseline", 
-#                        "Unequal baseline"),
-#             n.rgroup = c(4,4),
-            cgroup = c("","Percentile", "Weight", "Z-score"),
-            n.cgroup = c(1,2,2,2), 
-            caption="Median estimates for interaction term.",
-            tfoot="Note: IQR = inter-quartile range. Model 1: first order time, Model 2: second order time, Model 3: ANOVA (month 6 vs month 0)")
-
-```
-
----
-
-
 <!---
 Prep data for performance of bias and estimates of uncertainty
 See http://www4.stat.ncsu.edu/~davidian/st810a/,
@@ -508,14 +210,12 @@ Slides titled, "Simulation studies in statistics" by Dr. Davidian
 -->
 
 ```{r prep1}
-  
-n = ct # set the number of iterations here
+
 mu = 0.5 # the fixed value of mu set in the simulation -- mixsim.growth-8-sim-subset.R
 slope=0.5 # value for slope in simulation
 
 colnames(vals.b.dt[,28:33, with=F])
 # Note: each column corresponds to an estimate and each row corresponds to a sample
-
 
 vals.b.dt = within(vals.b.dt, {
   sigma=sigval
@@ -527,28 +227,23 @@ vals.b.dt = within(vals.b.dt, {
 colnames(vals.b.dt)
 # pval: 1:18,55,56; vals: 19:36,57,58; se: 37:54,59,60
 
-# get sample mean estimate by groups (population, gender and fixed effect values) over each of the xxx iterations per group
-samp.means = vals.b.dt[,lapply(.SD, function(x) {mean(x, na.rm=T)}),
-                  by = c("sigma","population.f", "gender", "e.f"),
-                  .SDcols=c(19:36,57,58)]
-samp.means
+# get sample mean estimate (of beta5, the interaction term) by groups (population, gender and fixed effect values) over each of the xxx iterations per group
 
-samp.vars = vals.b.dt[,lapply(.SD, function(x) {mean(x, na.rm=T)}),
-                  by = c("sigma","population.f", "gender", "e.f"),
-                  .SDcols=c(37:54,59,60)]
-samp.vars # the mean of the estimated standard errors for beta5 parameter
-samp.vars$type="SE"
+table(vals.b.dt$basevals) # basevals 1 and 2 have positive slope of 0.5 and basevals 3 and 4 have negative slope of -0.5; See baseint matrix in mixsim.growth-8-sim-subset.R
 
-samp.sd = vals.b.dt[,lapply(.SD, function(x) {sqrt(var(x, na.rm=T))}),
-                  by = c("sigma","population.f", "gender", "e.f"),
+vals.b.dt[,bias.neg:=lapply(.SD, function(x) {mean(x, na.rm=T)-(-0.5)}),
+                  by = c("sigma","population.f", "gender", "e.f", "basevals"),
                   .SDcols=c(19:36,57,58)]
-samp.sd  # the MC standard deviations (of beta5 parameter) 
-samp.sd$type="SD"
 
-bias = vals.b.dt[,lapply(.SD, function(x) {mean(x, na.rm=T)-slope}),
-                  by = c("sigma","population.f", "gender", "e.f"),
+vals.b.dt[,bias.pos:=lapply(.SD, function(x) {mean(x, na.rm=T)-(0.5)}),
+                  by = c("sigma","population.f", "gender", "e.f", "basevals"),
                   .SDcols=c(19:36,57,58)]
-bias
+
+vals.b.dt$value = with(vals.b.dt, {
+  ifelse(basevals %in% c(1,2), bias.pos, bias.neg)
+})
+
+bias = as.data.frame(vals.b.dt)
 bias$type="Bias"
 
 # Example:
@@ -557,16 +252,11 @@ bias$type="Bias"
 #  distribution with mean mu and variance sigma^2
 
 # bind together and melt to extract out variable name info
-samp.vars.l = melt(samp.vars, id.vars=c("sigma", "population.f",
-                                       "gender", "e.f", "type"))
-head(samp.vars.l)
-samp.sd.l = melt(samp.sd, id.vars=c("sigma", "population.f",
-                                       "gender", "e.f", "type"))
 
 bias.l = melt(bias, id.vars=c("sigma", "population.f",
-                                       "gender", "e.f", "type"))
+                                       "gender", "e.f", "type", "basevals"))
 
-info.1 = rbind(samp.vars.l, samp.sd.l, bias.l)
+info.1 = bias.l
 
 info.1 = within(info.1, {
   outcome = ifelse(grepl("zwei.", variable)==T, "Z",
@@ -579,171 +269,189 @@ info.1 = within(info.1, {
   alt = ifelse(grepl(".alt", variable)==T, 1,0)
 })
 
-info.1 = info.1[info.1$alt==1,]
+info.1 = info.1[info.1$alt==1,] # alt=1 has a scenario with real difference
 head(info.1)
 
 ```
 
 ---
 
-### Compare average of estimated standard errors for interaction term, $\beta_5$, to the Monte Carlo standard deviation (should be similar).
+Plots for the poster go here...
 
+```{r powerplot}
+dat.long$study.f = factor(dat.long$study,
+                          labels=c("Portugal",
+                                   "Italy",
+                                   "Chile"))
+levels(factor(dat.long$type))
+dat.long$type.f = factor(dat.long$type, levels=c("Weight", "Z", "Percentile"))
+levels(dat.long$type.f)
 
-```{r prep2}
-# Handle data so can be put in tabular for printing
+# Power ------------------------------------------
+table(dat.long$power.f)
 
-# standard deviations of MC sample estimates
-samp.sd.t = tabular(Heading("Population")*population.f*Heading("Parameter")*e.f*Heading("Model")*Factor(model)  ~ Format(digits=2)*Factor(outcome)*Heading()*identity*Heading()*value, data=info.1[info.1$type=="SD",])
-samp.sd.t
+head(dat.long[dat.long$power.f=="Interaction coefficient: median (IQR)^a",])
 
-# standard errors from estimates
-samp.se.t = tabular(Heading("Population")*population.f*Heading("Parameter")*e.f*Heading("Model")*Factor(model)  ~ Format(digits=2)*Heading("Outcome")*Factor(outcome)*Heading()*identity*Heading()*value, data=info.1[info.1$type=="SE",])
+dat.power = dat.long[dat.long$power.f=="Power" & dat.long$alt==1,]
+head(dat.power)
+dat.power = dat.power[complete.cases(dat.power),]
+head(dat.power)
+dat.power$value = as.numeric(dat.power$value)
+head(dat.power)
 
-# BIAS of beta5 estimator
-bias.t2 = tabular(Heading("Population")*population.f*Heading("Parameter")*e.f*Heading("Model")*Factor(model)  ~ Format(digits=2)*Factor(outcome)*Heading()*identity*Heading()*value, data=info.1[info.1$type=="Bias",])
-bias.t2
+g.1 <- guide_legend("Outcome")
+g.2 <- guide_legend("Sample")
 
-# sd + se  from estimates in one table
-samp.sesd.t = tabular(Heading("Population")*population.f*Heading("Parameter")*e.f*Heading("Model")*Factor(model)  ~ Format(digits=2)*Heading("Outcome")*Factor(outcome)*Factor(type)*Heading()*identity*Heading()*value, 
-                    data=info.1[info.1$type %in% c("SD","SE"),])
-samp.sesd.t
+p.1 = ggplot(aes(x=model, y=value, colour=type.f, shape=study.f), 
+             data=dat.power) +
+  geom_point(size=6) +
+  facet_grid(e.f ~.) + 
+  theme_bw(base_size = 26) +
+  xlab("Model") + ylab("") +
+  ggtitle("Power") +
+  scale_y_continuous(breaks=pretty(dat.power$value, n = 5)) +
+  guides(colour = g.1,
+         shape = g.2) +
+  theme(legend.position="bottom",
+        strip.text.y = element_text(size = 20))
+
+p.1
+
+# Type I error ------------------------------------------------------
+
+dat.t1e = dat.long[dat.long$power.f=="Type I error",]
+head(dat.t1e)
+dat.t1e = dat.t1e[complete.cases(dat.t1e),]
+head(dat.t1e)
+dat.t1e$value = as.numeric(dat.t1e$value)
+
+p.2 = ggplot(aes(x=model, y=value, colour=type.f, shape=study.f), data=dat.t1e) +
+  geom_point(size=6) +
+  facet_grid(e.f ~.) + 
+  theme_bw(base_size = 26) +
+  geom_hline(yintercept=0.05, lty=3, lwd=2, colour="red") +
+  xlab("Model") + ylab("") +
+  ggtitle("Type I error") +
+  scale_y_continuous(breaks=pretty(dat.t1e$value, n = 4)) +
+  guides(colour = g.1,
+         shape = g.2) +
+  theme(legend.position="bottom",
+        strip.text.y = element_text(size = 20))
+
+p.2
+  
+# BIAS ----------------------------------------
+
+#info.1.sub=info.1[info.1$type=="Bias" & !(info.1$outcome %in% c("Percentile")),]
+info.1.sub=info.1[info.1$type=="Bias",]
+table(info.1.sub$outcome)
+
+info.1.sub = info.1.sub[complete.cases(info.1.sub),]
+head(info.1.sub)
+table(info.1.sub$e.f)
+
+# Use dat.long data frame (instead of info.1)
+dat.bias = dat.long[dat.long$power.f=="Interaction coefficient: median (IQR)^a" & dat.long$alt==1,]
+# NOTE: need to go back and make sure I want the alt=1 and not alt=0
+dat.bias = dat.bias[complete.cases(dat.bias),]
+names(dat.bias)
+dat.bias$outcome = dat.bias$type
+
+dat.bias[,c("value", "population.f", "model", "alt", "e.f", "outcome")]
+
+class(dat.bias$value)
+dat.bias$value = as.numeric(dat.bias$value)
+table(dat.bias$basevals) # basevals 1,2 are positive slope, 0.5 and basevals 3,4 are negative slope, -0.5. See mixsim.growth-8-sim-subset.R base.int matrix object.
+head(dat.bias$value) 
+dat.bias$bias = with(dat.bias, {
+  ifelse(basevals %in% c(1,2), value-0.05, value+0.05)
+})
+
+table(dat.bias$model)
+
+names(dat.bias)
+
+dat.bias[1:100, c("study","basevals","value","e.f","model","type.f","outcome","study.f")]
+
+summary(dat.bias$bias)
+
+# | dat.bias$type=="Percentile"
+sub.dat.bias = dat.bias[!( dat.bias$model==3 | dat.bias$model=="Source"),]
+table(sub.dat.bias$model)
+
+p.3 = ggplot(aes(x=model, y=bias, colour=type.f, shape=study.f), data=sub.dat.bias) +
+  geom_point(size=6) +
+  facet_grid(e.f ~., scales="free") + 
+  theme_bw(base_size = 26) +
+  xlab("Model") + ylab("") +
+  geom_hline(yintercept=0, lty=3, lwd=2, colour="red") +
+  ggtitle("Bias") +
+  scale_y_continuous(breaks=pretty(sub.dat.bias$bias, n = 5)) +
+  ylim(-0.1, 0.1)+
+  guides(colour = g.1,
+         shape = g.2) +
+  theme(legend.position="bottom",
+        strip.text.y = element_text(size = 20))
+
+p.3
+
+# see http://stackoverflow.com/questions/13649473/add-a-common-legend-for-combined-ggplots
+# for info on adding a legend to bottom of plot (and code below that I copied)
+
+grid_arrange_shared_legend <- function(...) {
+    plots <- list(...)
+    g <- ggplotGrob(plots[[1]] + theme(legend.position="bottom"))$grobs
+    legend <- g[[which(sapply(g, function(x) x$name) == "guide-box")]]
+    lheight <- sum(legend$height)
+    grid.arrange(
+        do.call(arrangeGrob, lapply(plots, function(x)
+            x + theme(legend.position="none"))),
+        legend,
+        ncol = 1,
+        heights = unit.c(unit(1, "npc") - lheight, lheight))
+}
+
+grid_arrange_shared_legend(p.1, p.2, p.3)
+#multiplot(p.1, p.2, p.3, cols=3)
+
+# see http://www.sthda.com/english/wiki/ggplot2-easy-way-to-mix-multiple-graphs-on-the-same-page-r-software-and-data-visualization
+
+get_legend<-function(myggplot){
+  tmp <- ggplot_gtable(ggplot_build(myggplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)
+}
+
+legend <- get_legend(p.1)
+
+grid.arrange(p.1 + theme(legend.position="none"),
+             p.2 + theme(legend.position="none"),
+             p.3 + theme(legend.position="none"),
+             legend, 
+             ncol=3, nrow=2, 
+             layout_matrix = rbind(c(1,2,3), c(4,4,4)),
+             widths = c(2.7, 2.7, 2.7), 
+             heights = c(2.5, 0.2))
+
+setwd("~/")
+setwd("../")
+getwd()
+setwd("./Dropbox/unc.grad.school/presentations/Epi-congress-of-americas-2016/ser-poster-201606")
+
+# export to png TO GO INTO THE POSTER, MADE AT SER-2016-POSTER-AVH.RNW
+png("plot-power.png", width=5800, height=4300, res=300)
+ 
+grid.arrange(p.1 + theme(legend.position="none"),
+             p.2 + theme(legend.position="none"),
+             p.3 + theme(legend.position="none"),
+             legend, 
+             ncol=3, nrow=2, 
+             layout_matrix = rbind(c(1,2,3), c(4,4,4)),
+             widths = c(2.7, 2.7, 2.7), 
+             heights = c(2.5, 0.2))
+dev.off()
 
 ```
 
----
-
-```{r bias1, eval=F, results='asis'}
-bias.dat2 = as.matrix(bias.t2)
-#bias.dat[4:10,4:6]
-
-  htmlTable(bias.dat2[3:50,3:6],
-            header =  c("Model","Percentile", "Weight", "Z-score"),
-            
-            rnames = study.vec,
-            rgroup = evals,
-            n.rgroup = c(12,12,12,12),
-
-#             rnames = paste(rep(c("Portugal" , rep("",3)),2)),
-#             rgroup = c("Equal baseline",
-#                        "Unequal baseline"),
-#             n.rgroup = c(4,4),
-
-            cgroup = c("","Outcome"),
-            n.cgroup = c(1,3), 
-            caption="Bias estimates for interaction term",
-            tfoot="Note: Model 1: first order time, Model 2: second order time, Model 3: ANOVA (month 6 vs month 0)")
-```
-
-```{r bias2, eval=FALSE}
-html(samp.sd.t, file="", options=htmloptions(head=FALSE, table=TRUE, pad=T, justification="r"))
-```
-
----
-
-```{r sd-1, results='asis', eval=FALSE}
-samp.sd.dat = as.matrix(samp.sd.t)
-#samp.sd.dat[4:10,4:6]
-
-  htmlTable(samp.sd.dat[3:50,3:6],
-            header =  c("Model","Percentile", "Weight", "Z-score"),
-            
-            rnames = study.vec,
-            rgroup = evals,
-            n.rgroup = c(12,12,12,12),
-
-#             rnames = paste(rep(c("Portugal" , rep("",3)),2)),
-#             rgroup = c("Equal baseline",
-#                        "Unequal baseline"),
-#             n.rgroup = c(4,4),
-            cgroup = c("","Outcome"),
-            n.cgroup = c(1,3), 
-            caption="Standard deviation of interaction term values from Monte Carlo simulation.",
-              tfoot="Note: Model 1: first order time, Model 2: second order time, Model 3: ANOVA (month 6 vs month 0)")
-
-```
-
-
-
-```{r sd-2}
-html(samp.se.t, file="", options=htmloptions(head=FALSE, table=TRUE, pad=FALSE, justification="r"))
-```
-
----
-
-```{r se-1, results='asis', eval=FALSE}
-samp.se.dat = as.matrix(samp.se.t)
-#samp.se.dat[4:10,4:6]
-
-  htmlTable(samp.se.dat[3:50,3:6],
-            header =  c("Model","Percentile", "Weight", "Z-score"),
-            
-            rnames = study.vec,
-            rgroup = evals,
-            n.rgroup = c(12,12,12,12),
-            
-#             rnames = paste(rep(c("Portugal" , rep("",3)),2)),
-#             rgroup = c("Equal baseline", 
-#                        "Unequal baseline"),
-#             n.rgroup = c(4,4),
-            cgroup = c("","Outcome"),
-            n.cgroup = c(1,3), 
-            caption="Mean of standard error estimates for interaction term values derived from Monte Carlo simulation.",
-              tfoot="Note: Model 1: first order time, Model 2: second order time, Model 3: ANOVA (month 6 vs month 0)")
-
-```
-
----
-
-```{r se-2, results='asis'}
-samp.sesd.dat = as.matrix(samp.sesd.t)
-#samp.sesd.dat[4:10,3:9]
-#nrow(samp.sesd.dat)
-
-  htmlTable(samp.sesd.dat[5:52, 3:9],
-            header =  c("Model", rep(c("SD", "SE"),3)),
-            
-            rnames = study.vec,
-            rgroup = evals,
-            n.rgroup = c(12,12,12,12),
-
-#             rnames = paste(rep(c("Portugal" , rep("",3)),2)),
-#             rgroup = c("Equal baseline",
-#                        "Unequal baseline"),
-#             n.rgroup = c(4,4),
-            cgroup = c("","Percentile", "Weight", "Z-score"),
-            n.cgroup = c(1,2,2,2), 
-            caption="Standard deviation and mean of standard error estimates for interaction term values from Monte Carlo simulation.",
-              tfoot="Note: Model 1: first order time, Model 2: second order time, Model 3: ANOVA (month 6 vs month 0)")
-
-```
-
-
-----
-
-### Extra info on model covariance structure
-
-
-The correlation matrix, $\Gamma$ = $\displaystyle\begin{pmatrix}
-1 & \rho & \rho^2 & \rho^3 & \rho^4 & \rho^5 & \rho^6 \\
-\rho & 1 & \rho & \rho^2 & \rho^3 & \rho^4 & \rho^5 \\
-\rho^2 & \rho & 1 & \rho & \rho^2 & \rho^3 & \rho^4 \\
-\rho^3 & \rho^2 & \rho & 1 & \rho & \rho^2 & \rho^3\\
-\rho^4 & \rho^3 & \rho^2 & \rho & 1 & \rho & \rho^2 \\
-\rho^5 & \rho^4 & \rho^3 & \rho^2 & \rho & 1 & \rho\\
-\rho^6 & \rho^5 & \rho^4 & \rho^3 & \rho^2 & \rho & 1\\
-\end{pmatrix}$
-
-The covariance matrix, $\Sigma$ = $\displaystyle\begin{pmatrix}
-\sigma^2 & \rho\sigma^2 & \rho^2\sigma^2 & \rho^3\sigma^2 & \rho^4\sigma^2 & \rho^5\sigma^2 & \rho^6\sigma^2\\
-\rho\sigma^2 & \sigma^2 & \rho\sigma^2 & \rho^2\sigma^2 & \rho^3\sigma^2 & \rho^4\sigma^2 & \rho^5\sigma^2\\
-\rho^2\sigma^2 & \rho\sigma^2 & \sigma^2 & \rho\sigma^2 & \rho^2\sigma^2 & \rho^3\sigma^2 &\rho^4\sigma^2\\
-\rho^3\sigma^2 & \rho^2\sigma^2 & \rho\sigma^2 & \sigma^2 & \rho\sigma^2 & \rho^2\sigma^2 & \rho^3\sigma^2\\
-\rho^4\sigma^2 & \rho^3\sigma^2 & \rho^2\sigma^2 & \rho\sigma^2 & \sigma^2 & \rho\sigma^2 & \rho^4\sigma^2\\
-\rho^5\sigma^2 & \rho^4\sigma^2 & \rho^3\sigma^2 & \rho^2\sigma^2 & \rho\sigma^2 & \sigma^2 & \rho\sigma^2\\
-\rho^6\sigma^2 & \rho^5\sigma^2 & \rho^4\sigma^2 & \rho^3\sigma^2 & \rho^2\sigma^2 & \rho\sigma^2 & \sigma^2\\
-\end{pmatrix}$
-
----
-
-### References
 

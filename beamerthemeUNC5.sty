@@ -54,19 +54,21 @@
 \setbeamertemplate{itemize items}[triangle]
 \beamertemplatenavigationsymbolsempty  % no navigation on a poster
  
- % CODE for body of poster here.........................
+% CODE for body of poster here.........................%
+ 
+% The header blocks..........................................%
+% -------------------------------------------------------------%
 \setbeamertemplate{block begin}{
-  \begin{beamercolorbox}[ht=7ex, dp=0.5ex, center, leftskip=-1em, colsep*=.95ex]{block title}%
-    \usebeamerfont*{block title}%
-    {\phantom{Gg}\insertblocktitle}% phantom because of baseline problem
+  \begin{beamercolorbox}[ht=4ex, left, colsep*=.95ex]{block title}
+  \vbox to2.5ex{\vfil\hbox{\usebeamerfont*{block title}\insertblocktitle}\vfil}%
   \end{beamercolorbox}%
   
   {\ifbeamercolorempty[bg]{block body}{}{\nointerlineskip\vskip-0.5pt}}%
     \usebeamerfont{block body}%
-    \begin{beamercolorbox}[leftskip=1em, colsep*=.75ex, sep=0.25ex, vmode]{block body}%
+    \begin{beamercolorbox}[leftskip=0em, colsep*=.75ex, sep=0.25ex, vmode]{block body}%
     \ifbeamercolorempty[bg]{block body}{\vskip-.25ex}{\vskip-.75ex}\vbox{}%
 }
-
+\vskip1em
 \setbeamertemplate{block end}{
 \end{beamercolorbox}
 } 
@@ -121,7 +123,7 @@
 \end{beamercolorbox}
 \leavevmode%
 \begin{beamercolorbox}[ht=4ex,leftskip=1em,rightskip=1em]{footline}%
-\textcolor{carolinablue!20}{\small Created with \LaTeX~\texttt{beamerposter}}
+\textcolor{carolinablue!20}{\small Created with \LaTeX~\texttt{beamerposter. 2016 Epidemiology Congress of the Americas}}
 \hfill
 \texttt{\insertshortauthor}
   \includegraphics[scale=0.5]{qrcode-vonholle-chart.png}
