@@ -11,9 +11,43 @@
 \usepackage[english]{babel}
 \usepackage[latin1]{inputenc}
 \usepackage{bm}
+\usepackage{blindtext}
 \usepackage{scrextend}
-\usepackage{caption}
-\usepackage{subcaption}
+\addtokomafont{labelinglabel}{\sffamily}
+\usepackage{csquotes}
+
+\setbeamercolor{bibliography entry title}{fg=black,bg=black}% see http://tex.stackexchange.com/questions/71352/beamer-undefined-color-local-structure
+\setbeamertemplate{caption}[numbered]
+
+% set bullet points in itemize
+% see http://tex.stackexchange.com/questions/184080/using-beamer-bullets-in-poster
+\usepackage{tikz}
+\newcommand{\colouredcircle}{%
+  \tikz{\useasboundingbox (-0.2em,-0.32em) rectangle(0.2em,0.32em);
+        \draw[fill=blue,shading=ball,line width=0.03em] (0,0) circle(0.18em);}}
+\def\labelitemi{\colouredcircle}
+\def\labelitemi{--}
+
+% got from http://tex.stackexchange.com/questions/48023/mimic-bibtex-apalike-with-biblatex-biblatex-apa-broken
+\PassOptionsToPackage{
+        style=numeric,
+        hyperref=true,
+        backend=bibtex,
+        maxbibnames=99,
+        firstinits=true,
+        uniquename=init,
+        maxcitenames=2,
+        parentracker=true,
+        url=false,
+        doi=true,
+        isbn=false,
+        eprint=false,
+        backref=true,
+            }   {biblatex}
+% see the following link for info on biblatex sort order issue: 
+% http://tex.stackexchange.com/questions/51434/biblatex-citation-order
+\usepackage[natbib=true, sorting=none, style=numeric, backend=bibtex]{biblatex}
+\addbibresource{bib2}
 
 %\usepackage{fontspec} % have to compile with XeLaTeX
 %\setmainfont{Arial}
@@ -49,7 +83,6 @@
 
 
 <<mainSettings, echo=FALSE, include=FALSE>>=
-opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE, fig.height=5)
 library(knitr)
 library(ggplot2)
 library(mi)
@@ -59,8 +92,7 @@ library(tables)
 library(Hmisc)
 library(rms)
 library(tableone)
-#install.packages("mice")
-library(mice)
+opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE, fig.height=5)
 @
 
 
@@ -83,16 +115,14 @@ library(mice)
 
 \begin{frame}[t]
 
-  %\begin{columns}[T]
-  \begin{columns}[t] % t instead of T or c means columns start at top
+  \begin{columns}[T] % t instead of T or c means columns start at top
 
     % ---------------------------------------------------------%
     % Set up 1st column
     % ---------------------------------------------------------%
     \begin{column}{\onecolwid}
-    \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
+    \begin{beamercolorbox}[wd=\textwidth]{postercolumn}
     % fill each column with content
-    \vskip2ex
         % -----------------------------------------------------------
         % 1-1 (first column's first block
         % -----------------------------------------------------------
@@ -106,6 +136,10 @@ library(mice)
         % 1-2
         % -----------------------------------------------------------
         \begin{block}{Samples}
+         
+         \small{Growth trajectory parameters for baseline exposure correspond to published estimates for three samples: Italy, Portugal and Chile.}
+         \scriptsize{\fullcite{pizzi_prenatal_2014}}% see https://en.wikibooks.org/wiki/LaTeX/Fonts
+         
         \end{block}
         \vskip1ex
           
@@ -144,11 +178,11 @@ $y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\fr
         \item[\textbf{Model Terms}]
            %\begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
            \begin{labeling}{month.6} %https://en.wikibooks.org/wiki/LaTeX/List_Structures
-            \item[]
-            \item[\bm{$y_{ij}$}] \small the outcome: weight, Z-score or percentile
-            \item[\textbf{group}]  \small a binary exposure factor
-            \item[\textbf{month.6}] \small a binary variable for time with 1=month 6 and 0=month 0
-            \item[\bm{$e_{ij}$}] \small error term with a autocorrelation structure, $rho$=0.5 and $\sigma$=0.75
+            \item []
+            \item [\bm{$y_{ij}$}] \small the outcome: weight, Z-score or percentile
+            \item [\textbf{group}]  \small a binary exposure factor
+            \item [\textbf{month.6}] \small a binary variable for time with 1=month 6 and 0=month 0
+            \item [\bm{$e_{ij}$}] \small error term with a autocorrelation structure, $\rho$=0.5 and $\sigma$=0.75
           %\end{itemize}
           \end{labeling}
     
@@ -179,7 +213,7 @@ $y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\fr
         \begin{block}{Results}
 
           \begin{figure}
-          \caption{Simulated growth curves: weight and Z-score outcomes}
+          \caption{Simulated growth curves: weight, Z-score, and percentile outcomes using Chilean growth parameters}
           \centering
           \includegraphics{sim-female.png}
 %             \begin{subfigure}[b]{0.5\textwidth}
@@ -196,7 +230,7 @@ $y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\fr
   
           \begin{figure}
           \centering
-          \caption{Comparison of power, type-I error and bias.}
+          \caption{Comparison of power, type-I error and bias for product term for time and exposure effect, $\beta_3$.}
           \includegraphics{plot-power.png} % see poster-results.Rmd file for code to create image
           \end{figure}
           
@@ -216,14 +250,40 @@ $y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\fr
 \begin{column}{\onecolwid}
 \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
 
-\vfill
-      % -----------------------------------------------------------
+
+        \vfill
+        
+        % -----------------------------------------------------------
         % 3-1
         % -----------------------------------------------------------
         \begin{block}{Summary}
-           Put summary here
+        \small{
+          \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
+            \item[\textbf{Power}] Greater with original weight value. 
+              \begin{itemize}
+                \item[\colouredcircle] Weight difference at baseline creates larger differential.
+                \end{itemize}
+              \end{itemize}
+
+          \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
+            \item[\textbf{Type I error}] Closest to nominal level with original weight value.
+              \begin{itemize}
+                \item[\colouredcircle] Z-scores most likely to be less conservative.
+                \end{itemize}
+              \end{itemize}
+
+          \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
+            \item[\textbf{Bias}] Direction of effect in opposite direction for Z-score outcomes when groups have weight difference at baseline.
+              \begin{itemize}
+                \item[\colouredcircle] With no weight differences at baseline, estimates between Z-score and original weight value similar.
+                \end{itemize}
+              \end{itemize}
+        }
         \end{block}
         
+        \vskip1ex
+        \vfill
+
         % -----------------------------------------------------------
         % 3-2
         % -----------------------------------------------------------
