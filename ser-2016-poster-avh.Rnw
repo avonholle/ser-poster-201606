@@ -163,7 +163,9 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
 
 $y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\frac{\beta_3}{t}$
 
-        After simulating data, three models were run on the data:
+\noindent\rule{26cm}{0.4pt}
+
+        After simulating data, three models were fit with the simulated data:
         \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
           \item[\textbf{Model 1}] \small $y_{ij} = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{group} + \beta_3 \cdot t \cdot \textrm{group} + e_{ij}$
 %Linear regression with first order term for time: 
@@ -213,18 +215,9 @@ $y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\fr
         \begin{block}{Results}
 
           \begin{figure}
-          \caption{Simulated growth curves: weight, Z-score, and percentile outcomes using Chilean growth parameters}
+          \caption{Simulated weight growth curves with corresponding Z-score and percentile outcomes using Chilean growth parameters}
           \centering
-          \includegraphics{sim-female.png}
-%             \begin{subfigure}[b]{0.5\textwidth}
-%             \includegraphics[width=0.5\textwidth]{sim-female-baselines.png} % see plot.growth-baselines-copy.R file for code to create image
-%             \end{subfigure}
-%  ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
-%       %(or a blank line to force the subfigure onto a new line)            
-%             \begin{subfigure}[b]{0.5\textwidth}
-%             \centering
-%             \includegraphics[width=0.5\textwidth]{sim-female-Z-baselines.png}  % see plot.growth-baselines-copy.R file for code to create image
-%             \end{subfigure}
+          \includegraphics{sim-female.png}% see plot.growth-baselines-copy.R file for code to create image
           \end{figure}
           
   
@@ -256,26 +249,26 @@ $y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\fr
         % -----------------------------------------------------------
         % 3-1
         % -----------------------------------------------------------
-        \begin{block}{Summary}
+        \begin{block}{Results, cont \ldots}
         \small{
           \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-            \item[\textbf{Power}] Greater with original weight value. 
+            \item[\textbf{Power}] Consistently greater with crude weight. 
               \begin{itemize}
-                \item[\colouredcircle] Weight difference at baseline creates larger differential.
+                \item[\colouredcircle] Weight difference at baseline results in larger differential.
                 \end{itemize}
               \end{itemize}
 
           \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-            \item[\textbf{Type I error}] Closest to nominal level with original weight value.
+            \item[\textbf{Type I error}] Crude weight measure closest to nominal Type I error of 0.05.
               \begin{itemize}
-                \item[\colouredcircle] Z-scores most likely to be less conservative.
+                \item[\colouredcircle] Z-scores have greatest type I error for models 1 and 2.
                 \end{itemize}
               \end{itemize}
 
           \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-            \item[\textbf{Bias}] Direction of effect in opposite direction for Z-score outcomes when groups have weight difference at baseline.
+            \item[\textbf{Bias}] Baseline weight differences lead to opposite direction of effect for Z-score vs crude weight outcomes.
               \begin{itemize}
-                \item[\colouredcircle] With no weight differences at baseline, estimates between Z-score and original weight value similar.
+                \item[\colouredcircle] No weight differences at baseline leads to similar estimates between Z-score and original weight outcomes.
                 \end{itemize}
               \end{itemize}
         }
@@ -287,9 +280,23 @@ $y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\fr
         % -----------------------------------------------------------
         % 3-2
         % -----------------------------------------------------------
-        \begin{block}{Future Efforts}
-            \large
-          Put future efforts here.
+        \begin{block}{Summary}
+          \small
+          \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
+          \item[\textbf{Disadvantages of standardization}]
+            \item[\colouredcircle] There are several disadvantages to the use of Z-scores or percentiles when examining longitudinal within-subject change in child weight.
+              \begin{itemize}
+                \item[\colouredcircle] Use of Z-scores meant for cross-sectional weight measures can lead to opposite effects leading to conflicting inference when comparing trajectories across groups.
+                \item[\colouredcircle] Simulations show evidence of lower power and greater type I error when using Z-scores.
+                \item[]
+              \end{itemize}
+
+          \item[\textbf{Alternatives?}]
+          \item[]
+            \begin{itemize}
+              \item[\colouredcircle] Use crude weight scores and adjust for gender and age.
+              \end{itemize}
+          \end{itemize}
         
         \end{block}
         
