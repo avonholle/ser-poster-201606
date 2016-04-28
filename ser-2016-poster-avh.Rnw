@@ -282,11 +282,14 @@ $y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\fr
         % -----------------------------------------------------------
         \begin{block}{Summary}
           \small
+          Researchers often use a standardized measure of weight, such as Z-scores or percentiles, when examining longitudinal within-subject weight change as an exposure. An example of this approach is infant growth as a hypothesized exposure associated with cardiovascular outcomes in later life. Longitudinal analyses with weight Z-scores meant for cross-sectional use can lead to estimates conflicting with group differences in weight change. Other disadvantages relate to power and type I error.
+          
           \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
+          \item[]
           \item[\textbf{Disadvantages of standardization}]
-            \item[\colouredcircle] There are several disadvantages to the use of Z-scores or percentiles when examining longitudinal within-subject change in child weight.
-              \begin{itemize}
-                \item[\colouredcircle] Use of Z-scores meant for cross-sectional weight measures can lead to opposite effects leading to conflicting inference when comparing trajectories across groups.
+             \begin{itemize}
+                \item[]
+                \item[\colouredcircle] Use of Z-scores meant for cross-sectional weight outcome measures can lead to opposite effects from crude weight outcomes leading to conflicting inference when comparing trajectories across groups.
                 \item[\colouredcircle] Simulations show evidence of lower power and greater type I error when using Z-scores.
                 \item[]
               \end{itemize}
@@ -294,7 +297,7 @@ $y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\fr
           \item[\textbf{Alternatives?}]
           \item[]
             \begin{itemize}
-              \item[\colouredcircle] Use crude weight scores and adjust for gender and age.
+              \item[\colouredcircle] Use crude weight and adjust for gender .
               \end{itemize}
           \end{itemize}
         
