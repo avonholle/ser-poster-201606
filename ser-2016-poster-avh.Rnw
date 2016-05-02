@@ -162,9 +162,9 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
         \small{
         We simulated infant growth data using a Reed first order parametric model:
 
-$y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\frac{\beta_3}{t}$
+$y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\frac{\beta_3}{t} + \beta_4 \cdot \textrm{group} + \beta_5 \cdot t \cdot \textrm{group}$ % Note: see mixsim.growth-8-sim-subset-redo.R
 
-\noindent\rule{26cm}{0.4pt}
+\noindent\rule{20cm}{0.4pt}
 
         After simulating data, three models were fit with the simulated data:
         \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
@@ -185,7 +185,7 @@ $y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\fr
             \item [\bm{$y_{ij}$}] \small the outcome: weight, Z-score or percentile
             \item [\textbf{group}]  \small a binary exposure factor
             \item [\textbf{month.6}] \small a binary variable for time with 1=month 6 and 0=month 0
-            \item [\bm{$e_{ij}$}] \small error term with a autocorrelation structure, $\rho$=0.5 and $\sigma$=0.75
+            \item [\bm{$e_{ij}$}] \small error term with an autocorrelation structure, $\rho$=0.5 and $\sigma$=0.75
           %\end{itemize}
           \end{labeling}
     
@@ -224,7 +224,7 @@ $y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\fr
   
           \begin{figure}
           \centering
-          \caption{Comparison of power, type-I error and bias for product term for time and exposure effect, $\beta_3$.}
+          \caption{Comparison of power, type-I error and estimate for product term of time and exposure effect, $\beta_3$.}
           \includegraphics{plot-power.png} % see poster-results.Rmd file for code to create image
           \end{figure}
           
@@ -302,12 +302,12 @@ $y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\fr
         % -----------------------------------------------------------
         \begin{block}{Conclusions}
           \small
-          Each measure examined in this project, Z-scores, percentiles and crude weight measures, serves a purpose as needed in research. However, these outcomes in growth trajectory analyses are not equivalent. 
+          Each measure examined in this project: Z-scores, percentiles and crude weight measures, serves a purpose as needed in research. However, these outcomes in growth trajectory analyses are not equivalent. 
           \begin{itemize}
             \item[\colouredcircle] Transforming crude weight measures into Z-scores, as is commonly done in the literature, may provide benefits such as a reference point to a standard and comparability across genders, but this measure does not function the same as crude weight when examining growth trajectories.
             \item[\colouredcircle] Simulations presented here provide evidence for this conclusion when baseline differences in weight exists across groups.
-            \item[\colouredcircle] If reference to a standard is not a priority when examining group differences in growth trajectory patterns, the best approach is to use the crude weight measures.
-            \item[\colouredcircle] In the context of growth trajectories serving as exposures in life course analyses, use of Z-scores can lead to exposure misspecification and conflicting inference.
+            \item[\colouredcircle] If reference to a standard is not a priority when examining group differences in growth trajectory patterns, crude weight measures as an outcome are most advantageous.
+            \item[\colouredcircle] In the context of growth trajectories serving as exposures in life course analyses, use of Z-scores can lead to exposure misspecification and conflicting inference if comparison to a referent such as WHO is not an aim.
             \end{itemize}
 
         \end{block}
