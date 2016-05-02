@@ -129,11 +129,20 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
         % fill each column with content
         \begin{block}{Introduction}
         
-          \small{Analyses of growth trajectories are expanding in tandem with the growing interest in life course epidemiology. Z-scores are a frequent choice when modeling weight growth trajectories to standardize the sample to usually what is the CDC reference or WHO standard populations. When used for cross-sectional data, Z-scores have advantages including linear sex- and age- independent measures of weight outcomes. However, there is no appropriate rationale to use Z-scores, or an equivalent such as percentiles, when studying weight change in infancy.}
+          \small{Analyses of growth trajectories are expanding in tandem with the growing interest in life course epidemiology. Z-scores are a frequent choice when modeling weight growth trajectories to standardize the sample to usually what is the CDC reference or WHO standard populations. When used for cross-sectional data, Z-scores have advantages including linear sex- and age- independent measures of weight outcomes. However, there has been no comparison of model performance for outcomes including Z-scores, or an equivalent such as percentiles, and crude weight when studying weight trajectories in infancy.}
         \end{block}
         \vskip1ex
+    
         % -----------------------------------------------------------
         % 1-2
+        % -----------------------------------------------------------
+        \begin{block}{Aim}
+            \small{Use simulations to assess differences in power, type I error measures, and coefficient estimates of weight change differences across three different outcome measures in child anthropometric measures: weight, weight Z-score and weight percentiles.}                  
+            \end{block}
+            \vskip1ex
+        
+        % -----------------------------------------------------------
+        % 1-3
         % -----------------------------------------------------------
         \begin{block}{Samples}
          
@@ -144,15 +153,7 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
         \vskip1ex
           
           \vfill
-    
-        % -----------------------------------------------------------
-        % 1-3
-        % -----------------------------------------------------------
-        \begin{block}{Aim}
-            \small{Use simulations to assess differences in power, type I error measures, and coefficient estimates of weight change differences across three different outcome measures in child anthropometric measures: weight, weight Z-score and weight percentiles.}                  
-            \end{block}
-            \vskip1ex
-        
+
         % -----------------------------------------------------------
         % 1-4
         % -----------------------------------------------------------
@@ -282,29 +283,36 @@ $y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\fr
         % -----------------------------------------------------------
         \begin{block}{Summary}
           \small
-          Researchers often use a standardized measure of weight, such as Z-scores or percentiles, when examining longitudinal within-subject weight change as an exposure. An example of this approach is infant growth as a hypothesized exposure associated with cardiovascular outcomes in later life. Longitudinal analyses with weight Z-scores meant for cross-sectional use can lead to estimates conflicting with group differences in weight change. Other disadvantages relate to power and type I error.
           
           \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-          \item[]
-          \item[\textbf{Disadvantages of standardization}]
-             \begin{itemize}
-                \item[]
-                \item[\colouredcircle] Use of Z-scores meant for cross-sectional weight outcome measures can lead to opposite effects from crude weight outcomes leading to conflicting inference when comparing trajectories across groups.
-                \item[\colouredcircle] Simulations show evidence of lower power and greater type I error when using Z-scores.
-                \item[]
-              \end{itemize}
-
-          \item[\textbf{Alternatives?}]
-          \item[]
+          \item[\textbf{Z-scores or percentiles}]
             \begin{itemize}
-              \item[\colouredcircle] Use crude weight and adjust for gender .
-              \end{itemize}
+              \item These measures provide a measure of weight relative to a referent population.
+              \item[\colouredcircle] Trajectory group differences using Z-scores or percentiles as outcomes can lead to estimates in opposite direction compared crude weight outcomes.
+              \item[\colouredcircle] Using these measures also lead to lower power to detect differences in slope and inflated type I error. 
+             \end{itemize}
           \end{itemize}
         
         \end{block}
-        
+        \vskip1ex
         \vfill
-        
+
+        % -----------------------------------------------------------
+        % 3-3
+        % -----------------------------------------------------------
+        \begin{block}{Conclusions}
+          \small
+          Each measure examined in this project, Z-scores, percentiles and crude weight measures, serves a purpose as needed in research. However, these outcomes in growth trajectory analyses are not equivalent. 
+          \begin{itemize}
+            \item[\colouredcircle] Transforming crude weight measures into Z-scores, as is commonly done in the literature, may provide benefits such as a reference point to a standard and comparability across genders, but this measure does not function the same as crude weight when examining growth trajectories.
+            \item[\colouredcircle] Simulations presented here provide evidence for this conclusion when baseline differences in weight exists across groups.
+            \item[\colouredcircle] If reference to a standard is not a priority when examining group differences in growth trajectory patterns, the best approach is to use the crude weight measures.
+            \item[\colouredcircle] In the context of growth trajectories serving as exposures in life course analyses, use of Z-scores can lead to exposure misspecification and conflicting inference.
+            \end{itemize}
+
+        \end{block}
+        \vfill
+
 \end{beamercolorbox}
 \end{column}
 % ---------------------------------------------------------%
