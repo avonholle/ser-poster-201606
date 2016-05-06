@@ -160,32 +160,31 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
         \begin{block}{Method}
         
         \small{
-        We simulated infant growth data using a Reed first order parametric model:
-
-$y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\frac{\beta_3}{t} + \beta_4 \cdot \textrm{group} + \beta_5 \cdot t \cdot \textrm{group}$ % Note: see mixsim.growth-8-sim-subset-redo.R
+         We generated fixed effects infant growth data with a Reed first order parametric model (\textbf{Source}): $y_{ij} = \beta_0 + \beta_1 \cdot \texttt{t} + \beta_2 \cdot \texttt{ln}(\texttt{t}_{ij}) + \displaystyle\frac{\beta_3}{\texttt{t}_{ij}} + \beta_4 \cdot \texttt{group}_i + \beta_5 \cdot \texttt{t} \cdot \texttt{group}_i + e_{ij}$ % Note: see mixsim.growth-8-sim-subset-redo.R
 
 \noindent\rule{20cm}{0.4pt}
 
         After simulating data, three models were fit with the simulated data:
         \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-          \item[\textbf{Model 1}] \small $y_{ij} = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{group} + \beta_3 \cdot t \cdot \textrm{group} + e_{ij}$
+          \item[\textbf{Model 1}] \small $E(y) = \beta_0 + \beta_1 \cdot \texttt{t} + \beta_2 \cdot \texttt{group} + \beta_3 \cdot \texttt{t} \cdot \texttt{group}$
 %Linear regression with first order term for time: 
-          \item[\textbf{Model 2}] \small $y_{ij} = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{group} + \beta_3 \cdot t \cdot \textrm{group} + \beta_4 \cdot t^2 + e_{ij}$
+          \item[\textbf{Model 2}] \small $E(y) = \beta_0 + \beta_1 \cdot \texttt{t} + \beta_2 \cdot \texttt{group} + \beta_3 \cdot \texttt{t} \cdot \texttt{group} + \beta_4 \cdot \texttt{t}^2$
 %Linear regression with second order term for time: 
 
           \item[\textbf{Model 3}] 
           \begin{itemize}
             \item[]
-            \item[] \small $y_{ij} = \beta_0 \textrm{ + } \beta_1 \cdot \textrm{month.6} \textrm{ + } \beta_2 \cdot \textrm{group} \textrm{ + } \beta_3 \cdot \textrm{month.6} \cdot \textrm{group} \textrm{ + } e_{ij}$
+            \item[] \small $E(y) = \beta_0 + \beta_1 \cdot \texttt{month.6} + \beta_2 \cdot \texttt{group} + \beta_3 \cdot \texttt{month.6} \cdot \texttt{group}$
           \end{itemize}
         \item[\textbf{Model Terms}]
            %\begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
            \begin{labeling}{month.6} %https://en.wikibooks.org/wiki/LaTeX/List_Structures
             \item []
-            \item [\bm{$y_{ij}$}] \small the outcome: weight, Z-score or percentile
-            \item [\textbf{group}]  \small a binary exposure factor
-            \item [\textbf{month.6}] \small a binary variable for time with 1=month 6 and 0=month 0
-            \item [\bm{$e_{ij}$}] \small error term with an autocorrelation structure, $\rho$=0.5 and $\sigma$=0.75
+            \item [\bm{$y_{ij}$}] \footnotesize weight for person $i$ and time $j$, age (months)
+            \item [\bm{$y$}] \footnotesize outcome: weight, Z-score, percentile
+            \item [\textbf{group}]  \footnotesize a binary exposure factor
+            \item [\textbf{month.6}] \footnotesize a binary variable for time with 1=month 6 and 0=month 0
+            \item [\bm{$e_{ij}$}] \footnotesize error term with variance following an autocorrelation structure, $\rho$=0.5 and $\sigma$=0.75
           %\end{itemize}
           \end{labeling}
     
@@ -267,7 +266,7 @@ $y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\fr
               \end{itemize}
 
           \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-            \item[\textbf{Bias}] Baseline weight differences lead to opposite direction of effect for Z-score vs crude weight outcomes.
+            \item[\textbf{Estimates}] Baseline weight differences lead to opposite direction of effect for Z-score vs crude weight outcomes.
               \begin{itemize}
                 \item[\colouredcircle] No weight differences at baseline leads to similar estimates between Z-score and original weight outcomes.
                 \end{itemize}
@@ -289,7 +288,7 @@ $y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\fr
             \begin{itemize}
               \item These measures provide a measure of weight relative to a referent population.
               \item[\colouredcircle] Trajectory group differences using Z-scores or percentiles as outcomes can lead to estimates in opposite direction compared crude weight outcomes.
-              \item[\colouredcircle] Using these measures also lead to lower power to detect differences in slope and inflated type I error. 
+              \item[\colouredcircle] Using these measures also leads to lower power to detect differences in slope and inflated type I error. 
              \end{itemize}
           \end{itemize}
         
@@ -302,12 +301,14 @@ $y = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot \textrm{ln}(t) + \displaystyle\fr
         % -----------------------------------------------------------
         \begin{block}{Conclusions}
           \small
-          Each measure examined in this project: Z-scores, percentiles and crude weight measures, serves a purpose as needed in research. However, these outcomes in growth trajectory analyses are not equivalent. 
+          Each measure examined in this project: Z-scores, percentiles and crude weight measures, serves a purpose as needed in research.
           \begin{itemize}
-            \item[\colouredcircle] Transforming crude weight measures into Z-scores, as is commonly done in the literature, may provide benefits such as a reference point to a standard and comparability across genders, but this measure does not function the same as crude weight when examining growth trajectories.
-            \item[\colouredcircle] Simulations presented here provide evidence for this conclusion when baseline differences in weight exists across groups.
-            \item[\colouredcircle] If reference to a standard is not a priority when examining group differences in growth trajectory patterns, crude weight measures as an outcome are most advantageous.
-            \item[\colouredcircle] In the context of growth trajectories serving as exposures in life course analyses, use of Z-scores can lead to exposure misspecification and conflicting inference if comparison to a referent such as WHO is not an aim.
+            \item[]
+            \item[\colouredcircle] Transforming crude weight measures into Z-scores, as is commonly done in the literature, may provide benefits such as a reference point to a standard and comparability across genders, but it is important to note that this measure does not function the same as crude weight when examining growth trajectories.
+            \item[]
+            \item[\colouredcircle] If reference to a standard is not an aim when examining group differences in growth trajectory patterns, crude weight measures as an outcome provide higher power and less inflated type I error.
+            \item[]
+            \item[\colouredcircle] If growth trajectories serve as an exposure in life course analyses and comparison to a referent such as WHO is not an objective, Z-scores can lead to exposure misspecification and conflicting \\ inference.
             \end{itemize}
 
         \end{block}
