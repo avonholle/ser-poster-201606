@@ -63,12 +63,12 @@ library(grid)
 #setwd("C:/Users/vonholle/Dropbox/unc.grad.school/my-papers/ms-201505/programs")
 setwd("~/")
 setwd("../")
-setwd("./Dropbox/unc.grad.school/my-papers/ms-201505/programs")
+setwd("Dropbox/unc.grad.school/presentations/Epi-congress-of-americas-2016/ser-poster-201606")
 
 # Read in data and get power and nominal alpha
 # ................................................
 
-load("mixsim.growth-8-sim-subset.Rda") # this file has the vals.1 object from mixsim.growth-8-sim-subset.R. Run on killdevil.
+load("mixsim.growth-8-sim-subset.Rda") # this file has the vals.1 object from mixsim.growth-8-sim-subset-redo.R. Run on killdevil.
 
 head(vals.1) # note that all data is in tails -- females only
 dim(vals.1)
@@ -231,11 +231,12 @@ colnames(vals.b.dt)
 
 table(vals.b.dt$basevals) # basevals 1 and 2 have positive slope of 0.5 and basevals 3 and 4 have negative slope of -0.5; See baseint matrix in mixsim.growth-8-sim-subset.R
 
-vals.b.dt[,bias.neg:=lapply(.SD, function(x) {mean(x, na.rm=T)-(-0.5)}),
+# NOTE: 0.15 comes from beta4 parameter in base.int
+vals.b.dt[,bias.neg:=lapply(.SD, function(x) {mean(x, na.rm=T)-(-0.15)}),
                   by = c("sigma","population.f", "gender", "e.f", "basevals"),
                   .SDcols=c(19:36,57,58)]
 
-vals.b.dt[,bias.pos:=lapply(.SD, function(x) {mean(x, na.rm=T)-(0.5)}),
+vals.b.dt[,bias.pos:=lapply(.SD, function(x) {mean(x, na.rm=T)-(0.15)}),
                   by = c("sigma","population.f", "gender", "e.f", "basevals"),
                   .SDcols=c(19:36,57,58)]
 
@@ -306,14 +307,16 @@ p.1 = ggplot(aes(x=model, y=value, colour=type.f, shape=study.f),
              data=dat.power) +
   geom_point(size=6) +
   facet_grid(e.f ~.) + 
-  theme_bw(base_size = 26) +
+  theme_bw(base_size = 35) +
   xlab("Model") + ylab("") +
+  ylim(c(0,0.8)) +
   ggtitle("Power") +
-  scale_y_continuous(breaks=pretty(dat.power$value, n = 5)) +
+  scale_y_continuous(breaks=c(0,0.8,pretty(dat.power$value, n = 3))) +
   guides(colour = g.1,
          shape = g.2) +
   theme(legend.position="bottom",
-        strip.text.y = element_text(size = 20))
+        strip.text.y = element_text(size = 20),
+        plot.margin=unit(c(1,-0.5,1,-0.5), "cm"))
 
 p.1
 
@@ -328,7 +331,7 @@ dat.t1e$value = as.numeric(dat.t1e$value)
 p.2 = ggplot(aes(x=model, y=value, colour=type.f, shape=study.f), data=dat.t1e) +
   geom_point(size=6) +
   facet_grid(e.f ~.) + 
-  theme_bw(base_size = 26) +
+  theme_bw(base_size = 35) +
   geom_hline(yintercept=0.05, lty=3, lwd=2, colour="red") +
   xlab("Model") + ylab("") +
   ggtitle("Type I error") +
@@ -336,11 +339,13 @@ p.2 = ggplot(aes(x=model, y=value, colour=type.f, shape=study.f), data=dat.t1e) 
   guides(colour = g.1,
          shape = g.2) +
   theme(legend.position="bottom",
-        strip.text.y = element_text(size = 20))
+        strip.text.y = element_text(size = 20),
+        plot.margin=unit(c(1,-0.5,1,-0.5), "cm"))
 
 p.2
   
 # BIAS ----------------------------------------
+# Note: this really isn't bias with beta_hat - beta_true.
 
 #info.1.sub=info.1[info.1$type=="Bias" & !(info.1$outcome %in% c("Percentile")),]
 info.1.sub=info.1[info.1$type=="Bias",]
@@ -382,7 +387,7 @@ table(sub.dat.bias$model)
 p.3 = ggplot(aes(x=model, y=bias, colour=type.f, shape=study.f), data=sub.dat.bias) +
   geom_point(size=6) +
   facet_grid(e.f ~., scales="free") + 
-  theme_bw(base_size = 26) +
+  theme_bw(base_size = 35) +
   xlab("Model") + ylab("") +
   geom_hline(yintercept=0, lty=3, lwd=2, colour="red") +
   ggtitle("Bias") +
@@ -394,6 +399,140 @@ p.3 = ggplot(aes(x=model, y=bias, colour=type.f, shape=study.f), data=sub.dat.bi
         strip.text.y = element_text(size = 20))
 
 p.3
+
+# ESTIMATES  ----------------------------------------
+
+head(info.1.sub)
+with(info.1.sub, table(variable, type))
+
+info.1.sub2 = info.1[grep("alt.val",info.1$variable),] # find estimates that match alt.val output from program simulating data, ~/Dropbox/unc.grad.school/my-papers/ms-201505/programs/read-mixsim.growth-8-sim-subset.Rmd
+nrow(info.1.sub2)
+
+table(info.1.sub2$model)
+table(info.1.sub2$population.f)
+table(info.1.sub2$e.f)
+#table(info.1.sub2$variable)
+
+info.1.sub2$type = with(info.1.sub2, ifelse(grepl(".wt.", variable)==T, "weight",
+                                            ifelse(grepl(".pct.", variable)==T, "percent",
+                                                   ifelse(grepl(".zwei", variable)==T, "Zscore", NA))))
+table(info.1.sub2$type)
+# this estimate exists for 
+# three different models and source (model = 1,2,3, Source) -- note source model only includes weight
+# three different populations (population.f = Portugal, Italy and chile)
+# three different outcome types:  weight (.wt. in variable)  -- note source model only includes weight,
+                                # z-score (.zwei in variable)
+                                # and percentile (.pct. in variable)
+# four different model scenarios (e.f = uneq baseline and + slope, eq baseline and + slope, eq baseline and - slope, unequal baseline and - slope)
+
+# 3 x 3 X 4 = 36
+# with 10,000 iterations = 360,000 values per model with the exception of source
+
+# Get mean of estimates by each of those groups
+i1s2.dt = data.table(info.1.sub2[,c("model", "population.f", "e.f", "type", 'value')])
+head(i1s2.dt)
+
+means = i1s2.dt[, list(mean = mean(value, na.rm=T),
+                       median = median(value, na.rm=T),
+                       sd = sd(value, na.rm=T),
+                       mean.sd = mean(value, na.rm=T)/sd(value, na.rm=T),
+                       ct = sum(!is.na(value))),
+                by=c("model", "population.f", "e.f", "type")]
+
+means = means[complete.cases(means)]
+
+levels(factor(means$type))
+means$type.f = factor(means$type, 
+                      levels=c("weight", "Zscore", "percent"),
+                      labels=c("Weight", "Z", "Percentile"))
+
+# Now that I have the means and sd, plot them
+# strategy: only plot for model 3 (all direction of effects the same across models) with facetting. Rows will have the same info as the other plots (e.f), but the columns will have the types because they all have different scales.
+means.3 = means[means$model %in% c("3", "Source") & means$population.f=="Chile",]
+levels(means.3$type.f)
+
+
+means.4 = means
+means.4$mean = ifelse(means.4$type.f=="Percentile", NA, means.4$mean)
+
+means.4.nop = means.4[!(means.4$type.f %in% c("Percentile")),]
+
+
+# Weight --------------------------
+p.4a = ggplot(aes(x=model, y=mean), 
+             data=means.3[means.3$type.f=="Weight",]) +
+  geom_point(size=6) +
+  facet_grid(e.f ~ .) +
+  theme_bw(base_size = 30) +
+  geom_hline(yintercept=0, lty=3, lwd=2, colour="red") +
+  xlab("Model") + ylab("") + 
+  ggtitle(bquote(list(hat(beta[3]),  Weight))) + #see https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/plotmath.html
+  theme(strip.text.y = element_blank(),
+        strip.text.x = element_blank(),
+        plot.margin=unit(c(1,-0.5,1,-1), "cm"))+
+  guides(shape = g.2) 
+
+p.4a
+
+# Z --------------------------
+p.4b = ggplot(aes(x=model, y=mean), 
+             data=means.3[means.3$type.f=="Z",]) +
+  geom_point(size=6) +
+  facet_grid(e.f ~ .) + 
+  theme_bw(base_size = 30) +
+  geom_hline(yintercept=0, lty=3, lwd=2, colour="red") +
+  xlab("Model") + ylab("") +
+  ggtitle(bquote(list(hat(beta[3]), "Z-score"))) +
+  theme(strip.text.y = element_blank(),
+        plot.margin=unit(c(1,-0.5,1,-1), "cm"))
+
+p.4b
+
+# Percentile --------------------------
+p.4c = ggplot(aes(x=model, y=mean), 
+             data=means.3[means.3$type.f=="Percentile",]) +
+  geom_point(size=6) +
+  facet_grid(e.f ~ .) + 
+  theme_bw(base_size = 35) +
+  geom_hline(yintercept=0, lty=3, lwd=2, colour="red") +
+  xlab("Model") + ylab("") +
+  ggtitle(bquote(list(hat(beta[3]), "Percentile"))) +
+  theme(legend.position="bottom",
+        strip.text.y = element_text(size = 20),
+        plot.margin=unit(c(1, -0.45, 1,-1), "cm"))
+
+p.4c
+
+# combine all 3 into one plot ------------------------
+
+title.4 = textGrob(text(expression(beta_3)),gp=gpar(fontsize=30,font=1))
+
+p.4 = grid.arrange(p.4a,
+             p.4b,
+             p.4c,
+             ncol=3,
+             widths = c(3, 3, 4))
+p.4 # note: I don't like the clunky look of this plot. See alt below.
+
+p.4.alt = ggplot(aes(x=model, y=mean, colour=type.f, shape=population.f), data=means.4) +
+  geom_point(size=6) +
+  facet_grid(e.f ~., scales="free") + 
+  theme_bw(base_size = 35) +
+  xlab("Model") + ylab("") +
+  geom_hline(yintercept=0, lty=3, lwd=2, colour="red") +
+  scale_y_continuous(breaks=pretty(means.4.nop$mean, n = 5)) +
+  guides(colour = g.1,
+         shape = g.2) +
+  ggtitle(bquote(list(hat(beta[3])))) +
+  theme(legend.position="none",
+        strip.text.y = element_text(size = 20),
+        plot.margin=unit(c(0,-0.5,1,-0.5), "cm"))
+
+p.4.alt
+
+
+
+# ---------------------Now put all plots together into one for poster figure.
 
 # see http://stackoverflow.com/questions/13649473/add-a-common-legend-for-combined-ggplots
 # for info on adding a legend to bottom of plot (and code below that I copied)
@@ -425,10 +564,11 @@ get_legend<-function(myggplot){
 
 legend <- get_legend(p.1)
 
+t <- textGrob("")
 grid.arrange(p.1 + theme(legend.position="none"),
              p.2 + theme(legend.position="none"),
-             p.3 + theme(legend.position="none"),
-             legend, 
+             p.4,
+             legend, t,
              ncol=3, nrow=2, 
              layout_matrix = rbind(c(1,2,3), c(4,4,4)),
              widths = c(2.7, 2.7, 2.7), 
@@ -439,17 +579,28 @@ setwd("../")
 getwd()
 setwd("./Dropbox/unc.grad.school/presentations/Epi-congress-of-americas-2016/ser-poster-201606")
 
-# export to png TO GO INTO THE POSTER, MADE AT SER-2016-POSTER-AVH.RNW
-png("plot-power.png", width=5800, height=4300, res=300)
+# ---------------------------------------------
+# Export to png TO GO INTO THE POSTER, MADE AT SER-2016-POSTER-AVH.RNW
+png("plot-power.png", width=5400, height=5000, res=300)
  
 grid.arrange(p.1 + theme(legend.position="none"),
              p.2 + theme(legend.position="none"),
-             p.3 + theme(legend.position="none"),
+             p.4.alt + theme(legend.position="none"),
              legend, 
              ncol=3, nrow=2, 
              layout_matrix = rbind(c(1,2,3), c(4,4,4)),
-             widths = c(2.7, 2.7, 2.7), 
+             widths = c(2.5, 2.5, 2.5), 
              heights = c(2.5, 0.2))
+
+# grid.arrange(p.1 + theme(legend.position="none"),
+#              p.2 + theme(legend.position="none"),
+#              p.3 + theme(legend.position="none"),
+#              legend,
+#              ncol=3, nrow=2, 
+#              layout_matrix = rbind(c(1,2,3), c(4,4,4)),
+#              widths = c(2.7, 2.7, 2.7), 
+#              heights = c(2.5, 0.2))
+
 dev.off()
 
 ```

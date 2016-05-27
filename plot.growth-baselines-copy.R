@@ -6,7 +6,7 @@
 # and accompanying interaction term change
 # grid will be by country and difference at baseline between 2 groups
 
-# data from plot.growth-data.R
+# data from plot.growth-data-copy.R
 
 # .....................................................
 
@@ -28,7 +28,6 @@ library(grid)
 
 # Load data from plot.growth-data.R, vals.p object
 # .................................
-
 
 load("vals.p.Rda")
 
@@ -59,8 +58,11 @@ test = sub.vals.p[,c("id", "x.1", "evals")]
 head(test)
 
 d = data.table(unique(test), key=c("id", "x.1", "evals"))
+head(d)
 id.sub = d[, head(.SD,5), by = list(x.1, evals)]
-nrow(id.sub)
+#id.sub = d[, by = list(x.1, evals), sample(.N,5)] # 5 randomly selected people from each exposure (x.1) and simulation scenario (evals)
+#colnames(id.sub)[3] = "id" # not sure why column name is no longer id
+
 id.sub$new.id = with(id.sub, paste(id, ".", x.1, ".", evals, sep=""))
 id.sub$new.id
 
@@ -76,12 +78,12 @@ levels(random.sub$params.f)
 p.f = ggplot(data = random.sub,
              aes(x=time, y=yij, colour=x.1f)) +
   geom_line(aes(group=id)) + 
-  facet_grid(evals.f ~ params.f) +
+  facet_grid(evals.f ~ .) +
   scale_colour_manual("Group",
                       values = c("unexposed" = "blue",
                                  "exposed" = "red")) +
-  scale_y_continuous(breaks=seq(0,12,by=4)) +
-  scale_x_continuous(breaks=c(0,2,4,6,8,10,12)) +
+  scale_y_continuous(breaks=seq(0,9,by=2), lim=c(2,9)) +
+  scale_x_continuous(breaks=c(0,2,4,6), lim=c(0,6)) +
   ylab("Weight (kg)") +
   xlab("Time (months)") +
   theme_bw(base_size=26) +
@@ -109,41 +111,11 @@ p.df
 
 Vars <- c( "a.2", "b.2", "c.2", "d.2")
 
-slope.1 = function(f) {
-#  t.star = (t+9)/9 # adjusted time scale
-  f.star = f /( (1+9)/9 - 1) 
-  
-  return(e=-f.star)
-  
-#  yij.exp = a + b*t.star + c*log(t.star) + d/t.star + e*exposure + f.star*t.star*exposure
-#  yij.exp0 = a + b*t.star + c*log(t.star) + d/t.star 
-#  yij.exp1 = a + b*t.star + c*log(t.star) + d/t.star + e + f.star*t.star
-#  to have weight for unexposed = weight exposed at t=0 (and t.star=1)
-#  need to have e = -f.star*t.star
-
-  # would like baseline weight, at time, t, =0, to be equal around live birth; 
-  # t=0 and t.star=1;
-  # e = -f.star*1
-  # if f = 0.15 -> f.star = 0.15/(10/9-1) = 1.35 -> e = 1.35*1 = 1.35
-  # for f = -0.15 -> f.star = -0.15/(10/9-1) = -1.35 -> e = -1.35*1 = -1.35
-}
-
-effect.est = slope.1(0.15); effect.est # slope=0.15; e=-1.35
-
-# make matrix with combination of different 
-# baseline and slope values for 
-# 1) higher baseline for exposure; positive slope
-# 2) equal baseline for exposure; positive slope
-# 3) equal baseline for exposure; negative slope
-# 4) negative baseline for exposure; negative slope
-
-base.int = matrix(c(-0.50, 0.15,
-                    -1.35, 0.15,
-                    1.35, -0.15,
-                    0.50, -0.15), # beta4 is diff at baseline (first col) and 
-                  # beta5 is diff in slopes (2nd col)
-                  # set so that exposure groups have similar baseline weight values
-                  nrow=4, byrow=T)
+base.int = matrix(c(0, 0.5,
+                    -0.50, 0.50,
+                    0.50, -0.50,
+                    0, -0.5), # beta4 (first col) and beta5 (2nd col) set so that exposure groups have similar baseline weight values
+                  nrow=4, byrow=T) 
 
 extra.vars = c("e", "f.1")
 #see http://stackoverflow.com/questions/1376967/using-stat-function-and-facet-wrap-together-in-ggplot2-in-r
@@ -170,6 +142,12 @@ coef.zwei =
         coef(glm(zwei~time, data=x))[1:2]
 })
 
+coef.pctile=
+  ddply(sub.vals.p, c("params", "evals", "x.1"), 
+        function(x) {
+          coef(glm(pctile~time, data=x))[1:2]
+        })
+
 pred.lines = foreach(samps = unique(sub.vals.p$params), .combine="rbind") %do% {
   foreach(type = unique(sub.vals.p$evals), .combine="rbind") %do% {
     foreach(exposure = unique(sub.vals.p$x.1), .combine="rbind") %do% {
@@ -178,7 +156,11 @@ pred.lines = foreach(samps = unique(sub.vals.p$params), .combine="rbind") %do% {
       a = with(coef.zwei, coef.zwei[params %in% samps & evals %in% type & x.1 %in% exposure, 4])
       b = with(coef.zwei, coef.zwei[params %in% samps & evals %in% type & x.1 %in% exposure, 5])
       
-    # Assign model parameters according to sample they were drawn from
+      # assign the intercept and slope for zwei regressed onto time in linear model
+      a.p = with(coef.pctile, coef.pctile[params %in% samps & evals %in% type & x.1 %in% exposure, 4])
+      b.p = with(coef.pctile, coef.pctile[params %in% samps & evals %in% type & x.1 %in% exposure, 5])
+      
+      # Assign model parameters according to sample they were drawn from
       #a.2, b.2, c.2, and d.2
     Dat <- as.vector(p.df[samps,])
     for (i in 1:length(Vars)){
@@ -193,7 +175,7 @@ pred.lines = foreach(samps = unique(sub.vals.p$params), .combine="rbind") %do% {
       }
 
     t.star = (time+9)/9 # adjusted time scale
-    f.1.star = f.1 /( (1+9)/9 - 1) 
+#    f.1.star = f.1 /( (1+9)/9 - 1) 
     
     return(
       data.frame(
@@ -205,8 +187,9 @@ pred.lines = foreach(samps = unique(sub.vals.p$params), .combine="rbind") %do% {
                           c.2*log(t.star) + 
                           d.2/t.star + 
                           e*exposure + 
-                          f.1.star*(time+9)/9*exposure,
+                          f.1*(time+9)/9*exposure,
                zij = a + b*time,
+               p.ij = a.p + b.p*time,
                params = samps,
                evals = type,
                x.1 = exposure)
@@ -235,10 +218,10 @@ pred.lines = within(pred.lines, {
 ggplot(data=pred.lines, 
        aes(x=time, y=yij, colour=x.1f)) +
   geom_line(lwd=1) +
-  facet_grid(evals.f ~ params.f) +
+  facet_grid(evals.f ~ .) +
   scale_colour_manual("Group",
                       values = c("unexposed" = "blue","exposed" = "red")) +
-  geom_hline(yintercept=10, lty=3, lwd=1) +
+  geom_hline(yintercept=7.3, lty=3, lwd=1) +
   theme_bw()
 
 
@@ -249,7 +232,7 @@ p.f +
   geom_line(data=pred.lines, 
                   aes(x=time, y=yij, colour=x.1f),
                   lwd=2) +
-  geom_hline(yintercept=10, lty=3, lwd=1.5)
+  geom_hline(yintercept=7.3, lty=3, lwd=1.5)
 
 
 dev.off()
@@ -272,27 +255,65 @@ ggplot(data=pred.lines,
 head(pred.lines)
 
 
-png(file="sim-female-Z-baselines.png", res=300, height=1800, width=2400)
-
 z.1 = ggplot(random.sub, 
-       aes(x=time, y=zwei, colour=x.1f)) +
+             aes(x=time, y=zwei, colour=x.1f)) +
   geom_line(aes(group=id), lty=1) + 
   geom_hline(yintercept=0, lty=2) +
   ylab("Z-scores") +
   xlab("Time (months)") +
-  facet_grid(evals.f ~ params.f) +
-  scale_x_continuous(breaks=c(0,2,4,6,8,10,12)) +
+  facet_grid(evals.f ~ .) +
+  scale_x_continuous(breaks=c(0,2,4,6), lim=c(0,6)) +
   theme_bw(base_size=26) +
   theme(legend.position="bottom",
         strip.text.y = element_text(size = 20))  +
   scale_colour_manual("Group",
                       values = c("unexposed" = "blue","exposed" = "red")) 
+z.1
 
 
+png(file="sim-female-Z-baselines.png", res=300, height=1800, width=2400)
 z.1 +
   geom_line(data=pred.lines, 
                aes(x=time, y=zij, colour=x.1f),
                lwd=2) 
+dev.off()
+
+# Percentiles ---------------------------------------------
+# ---------------------------------------------------------
+
+# Output to png file
+
+# test predicted lines here
+ggplot(data=pred.lines, 
+       aes(x=time, y=p.ij, colour=x.1f)) +
+  geom_line(lwd=1) +
+  facet_grid(evals.f ~ params.f) +
+  scale_colour_manual("Group",
+                      values = c("unexposed" = "blue","exposed" = "red")) +
+  theme_bw()
+
+p.1 = ggplot(random.sub, 
+             aes(x=time, y=pctile, colour=x.1f)) +
+  geom_line(aes(group=id), lty=1) + 
+  geom_hline(yintercept=0, lty=2) +
+  ylab("Percentiles") +
+  xlab("Time (months)") +
+  facet_grid(evals.f ~ .) +
+  scale_x_continuous(breaks=c(0,2,4,6), lim=c(0,6)) +
+  theme_bw(base_size=26) +
+  theme(legend.position="bottom",
+        strip.text.y = element_text(size = 20))  +
+  scale_colour_manual("Group",
+                      values = c("unexposed" = "blue","exposed" = "red")) 
+p.1
+
+png(file="sim-female-percentiles.png", res=300, height=1800, width=2400)
+
+p.1 +
+  geom_line(data=pred.lines, 
+            aes(x=time, y=p.ij, colour=x.1f),
+            lwd=2)
+
 dev.off()
 
 # Combine z-scores and weight into one figure as in poster-results.Rmd
@@ -305,29 +326,55 @@ get_legend<-function(myggplot){
   return(legend)
 }
 
-legend <- get_legend(z.p)
-
 
 weight.p = p.f +   
   geom_line(data=pred.lines, 
             aes(x=time, y=yij, colour=x.1f),
             lwd=2) +
-  geom_hline(yintercept=10, lty=3, lwd=1.5)
+  geom_hline(yintercept=7.3, lty=3, lwd=1.5) +
+  theme_bw(base_size = 35) +
+  theme(legend.position="bottom",
+        strip.text.y = element_text(size = 20))
 
 z.p = z.1 +
   geom_line(data=pred.lines, 
             aes(x=time, y=zij, colour=x.1f),
-            lwd=2) 
+            lwd=2) +
+  theme_bw(base_size = 35) +
+  theme(legend.position="bottom",
+        strip.text.y = element_text(size = 20))
+
+legend <- get_legend(z.p)
 
 
-png(file="sim-female.png", width=4800, height=4300, res=300)
+p.p = 
+  p.1 +
+  geom_line(data=pred.lines, 
+            aes(x=time, y=p.ij, colour=x.1f),
+            lwd=2) +
+  theme_bw(base_size = 35) +
+  theme(legend.position="bottom",
+        strip.text.y = element_text(size = 20))
+
+png(file="sim-female.png", width=5600, height=4300, res=300)
 
 grid.arrange(weight.p + theme(legend.position="none"),
              z.p + theme(legend.position="none"),
+             p.p + theme(legend.position="none"),
              legend, 
-             ncol=2, nrow=2, 
-             layout_matrix = rbind(c(1,2), c(3,3)),
-             widths = c(2.7, 2.7), 
-             heights = c(2.5, 0.2))
+             ncol=3, nrow=2, 
+             layout_matrix = rbind(c(1,2,3), c(4,4,4)),
+             widths = c(2.7, 2.7, 2.7), 
+             heights = c(2.5, 0.3))
 
 dev.off()
+
+
+grid.arrange(weight.p + theme(legend.position="none"),
+             z.p + theme(legend.position="none"),
+             p.p + theme(legend.position="none"),
+             legend, 
+             ncol=3, nrow=2, 
+             layout_matrix = rbind(c(1,2,3), c(4,4,4)),
+             widths = c(2.7, 2.7, 2.7), 
+             heights = c(2.5, 0.2))

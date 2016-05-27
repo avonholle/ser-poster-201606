@@ -22,11 +22,13 @@
 % set bullet points in itemize
 % see http://tex.stackexchange.com/questions/184080/using-beamer-bullets-in-poster
 \usepackage{tikz}
+
 \newcommand{\colouredcircle}{%
   \tikz{\useasboundingbox (-0.2em,-0.32em) rectangle(0.2em,0.32em);
         \draw[fill=blue,shading=ball,line width=0.03em] (0,0) circle(0.18em);}}
 \def\labelitemi{\colouredcircle}
 \def\labelitemi{--}
+
 
 % got from http://tex.stackexchange.com/questions/48023/mimic-bibtex-apalike-with-biblatex-biblatex-apa-broken
 \PassOptionsToPackage{
@@ -95,7 +97,6 @@ library(tableone)
 opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE, fig.height=5)
 @
 
-
 % This is based on the template at http://www-i6.informatik.rwth-aachen.de/~dreuw/latexbeamerposter.php
 
 % --------------------------------------------------------------------------------------% 
@@ -129,7 +130,14 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
         % fill each column with content
         \begin{block}{Introduction}
         
-          \small{Analyses of growth trajectories are expanding in tandem with the growing interest in life course epidemiology. Z-scores are a frequent choice when modeling weight growth trajectories to standardize the sample to usually what is the CDC reference or WHO standard populations. When used for cross-sectional data, Z-scores have advantages including linear sex- and age- independent measures of weight outcomes. However, there has been no comparison of model performance for outcomes including Z-scores, or an equivalent such as percentiles, and crude weight when studying weight trajectories in infancy.}
+          \small{
+            \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
+                \item[\colouredcircle] Growth trajectory characteristics are frequently used in life course analyses as an exposure through which later life adverse events, such as cardiovascular disease, are linked.
+            
+            \item[\colouredcircle] Z-scores are a frequent outcome choice when modeling weight growth trajectories. \textbf{Advantages} include linear sex- and age- independent measures of weight outcomes. \textbf{Disadvantage} is measure meant for cross-sectional use.
+            \item[\colouredcircle] Rationale frequently not clear in decision to use a standardized measure in longitudinal analyses instead of crude weight.
+            \end{itemize}
+            }
         \end{block}
         \vskip1ex
     
@@ -137,7 +145,7 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
         % 1-2
         % -----------------------------------------------------------
         \begin{block}{Aim}
-            \small{Use simulations to assess differences in power, type I error measures, and coefficient estimates of weight change differences across three different outcome measures in child anthropometric measures: weight, weight Z-score and weight percentiles.}                  
+            \small{To determine precision, type I error and potential for biased  estimates we use Monte Carlo simulations to compare three different weight outcome models when estimating group differences in weight change during infancy.}                  
             \end{block}
             \vskip1ex
         

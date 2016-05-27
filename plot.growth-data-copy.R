@@ -1,4 +1,6 @@
-# plot.growth-data.R
+# plot.growth-data-manuscript.R
+
+# Note: adapted from plot.growth-data-copy.R in ~Dropbox\unc.grad.school\presentations\Epi-congress-of-americas-2016\ser-poster-201606
 
 # Make data to plot the growth curves for each of the countries
 # and accompanying interaction term change
@@ -35,22 +37,22 @@ source("run-who.R")
 
 param.vals.boys = 
   t(matrix(
-    c(6.70,  5.49, 12.52,  10.95,  19.80,
-      0.16,  0.14, 0.85,  0.66,	3.29,
-      0.42,	0.54, -0.08,	1.48,	-10.47,
-      -3.50,	-2.68, -10.25,	-8.28,	-19.74),
+    c( 12.52,  10.95,  19.80,
+      0.85,  0.66,	3.29,
+      -0.08,	1.48,	-10.47,
+      -10.25,	-8.28,	-19.74),
     nrow=4,
-    ncol=5, byrow=T))
+    ncol=3, byrow=T))
 param.vals.boys
 
 param.vals.girls=
   t(matrix(
-    c(4.44, 5.13, 9.72,	6.76,	16.87,
-      0.13,	0.14, 0.79,	-0.41,	3.20,
-      1.16,	0.48, 1.33,	5.87,	-8.96,
-      -1.36,	-2.43, -7.49,	-3.22,	-16.77),
+    c(9.72,	6.76,	16.87,
+      0.79,	-0.41,	3.20,
+      1.33,	5.87,	-8.96,
+      -7.49,	-3.22,	-16.77),
     nrow=4,
-    ncol=5, byrow=T))
+    ncol=3, byrow=T))
 
 p.df = cbind(param.vals.boys,param.vals.girls)
 
@@ -62,19 +64,45 @@ p.df
 sigmas = c(0.75)
 gends = 2 # 1=male, 2=female
 
+# Function to determine beta4 paramter given the interaction between slopes, beta5
+# ------------------------------------------------------------
+
+
+# original function to generate outcome for girls in the Pizzi paper
+# yij = a.2 + b.2*t.star + c.2*log(t.star) + d.2/t.star + e*x.1 + f.1*t.star*x.1 + eij, # Pizzi
+
+# Some definitions:           
+#   e = beta4, baseline difference term
+#   f.1 = beta5, interaction term
+#   t.star = as.numeric((time+9)/9) 
+#   f.1.star = f.1 /( (1+9)/9 - 1) # Note: a one unit change in months is equivalent to a 0.11 change in this scale -- so 1/0.11*0.1 = 0.9 should convert to 0.1 change on time scale
+
+# If you want the mean intercept to be the same for each x.1 group at baseline, t=0 and t.star=1, then 
+# should have e*x.1 + f.1*t.star*x.1 = 0
+# Then e = -f.1*t.star
+
+# if f.1 = 0.5 and t.star = (0+9)/9 = 10/9 = 1
+# so e = -0.5 * 1 = -0.5
+
+get.int = function(b5) {
+  e = -b5*1
+  return(e)
+}
+
+get.int(0.50) # -0.50
+get.int(-0.50) # 0.50
+
 # combine the differences at baseline in the first col and
 # the interaction term in the second col
 # Note: for the latter models based on the Pizzi paper you have to adjust the baseline value so that 
 # you get the values at birth to be equal. Since baseline is approximately time of conception in these models
 # you need to change the baseline to a different one than a model with a different interaction term.
 
-base.int = matrix(c(-0.50, 0.15,
-                    -1.35, 0.15,
-                    1.35, -0.15,
-                    0.50, -0.15), # beta4 is diff at baseline (first col) and 
-                  # beta5 is diff in slopes (2nd col)
-                  # set so that exposure groups have similar baseline weight values
-                  nrow=4, byrow=T)
+base.int = matrix(c(0, 0.5,
+                    -0.50, 0.50,
+                    0.50, -0.50,
+                    0, -0.5), # beta4 (first col) and beta5 (2nd col) set so that exposure groups have similar baseline weight values
+                  nrow=4, byrow=T) 
 
 # Create arrays to store data from for loops below.
 store.1 = array(list(NULL), dim = c(length(unique(sigmas)), nrow(p.df), nrow(base.int)))
@@ -87,6 +115,7 @@ dim(store.1)
 
 # 2) Positive diff at baseline: 'high' group is 0.50 kg heavier than 'low' group at birth
 # -------------------------------------------------------------------------------------
+set.seed(1234)
 
 # Run for loop to generate data and corresponding estimates from regression models
 for(params in 1:nrow(p.df)){
@@ -100,13 +129,11 @@ for(params in 1:nrow(p.df)){
       #basevals=3
       base.int.vals = base.int[basevals,]
       
-      iter=1; num=200 # num is total number of people in simulation
+      iter=1; num=100 # num is total number of people in simulation
         
         # 4c) Coefficients for Reed model. See http://stackoverflow.com/questions/16276667/using-apply-with-assign-in-r
-        pop = params
-        
         Vars <- c("a.1", "b.1", "c.1", "d.1", "a.2", "b.2", "c.2", "d.2")
-        Dat <- as.vector(p.df[pop,])
+        Dat <- as.vector(p.df[params,])
         for (i in 1:length(Vars)){
           assign(Vars[i], as.numeric(Dat[i]))
         }
@@ -152,7 +179,6 @@ for(params in 1:nrow(p.df)){
           
           # 4a) Make boy and girl indicators for each point in dat data frame
           dat$boys = grepl(1, dat$gender)
-          dat$pop.1 = ifelse(pop==1,T,F)
           head(dat)
           dat$yij = NA
           dat$yij.2 = NA
@@ -162,7 +188,7 @@ for(params in 1:nrow(p.df)){
           f.2 = 0
           f.3 = 0
           
-          f.1.star = f.1 /( (1+9)/9 - 1) # Note: a one unit change in months is equivalent to a 0.11 change in this scale -- so 1/0.11*0.1 = 0.9 should convert to 0.1 change on time scale
+#          f.1.star = f.1 /( (1+9)/9 - 1) # Note: a one unit change in months is equivalent to a 0.11 change in this scale -- so 1/0.11*0.1 = 0.9 should convert to 0.1 change on time scale
     
           # 4d) Make weight outcomes according to model used in each paper -- Chirwa model different than Pizzi model.
           dat = within(dat, {
@@ -170,18 +196,15 @@ for(params in 1:nrow(p.df)){
             
             t.star = as.numeric((time+9)/9)
             
-            yij = ifelse(boys==T & pop.1==T, a.1 + b.1*time + c.1*log(time+1) + d.1/(time+1) + e*x.1 + f.1*time*x.1 + eij, # Chirwa
-                         ifelse(boys==F & pop.1==T, a.2 + b.2*time + c.2*log(time+1) + d.2/(time+1) + e*x.1 + f.1*time*x.1 + eij, # Chirwa
-                                ifelse(boys==T & pop.1==F, a.1 + b.1*t.star + c.1*log(t.star) + d.1/t.star + e*x.1 + f.1.star*t.star*x.1 + eij, # Pizzi
-                                       ifelse(boys==F & pop.1==F, a.2 + b.2*t.star + c.2*log(t.star) + d.2/t.star + e*x.1 + f.1.star*t.star*x.1 + eij, # Pizzi
-                                              NA))))
+            yij = ifelse(boys==T, a.1 + b.1*t.star + c.1*log(t.star) + d.1/t.star + e*x.1 + f.1*t.star*x.1 + eij, # Pizzi
+                         ifelse(boys==F, a.2 + b.2*t.star + c.2*log(t.star) + d.2/t.star + e*x.1 + f.1*t.star*x.1 + eij, # Pizzi
+                                              NA))
             
             # no effect for x.1 group. Use this to get alpha
-            yij.2 = ifelse(boys==T & pop.1==T, a.1 + b.1*time + c.1*log(time+1) + d.1/(time+1) + eij, # Chirwa
-                           ifelse(boys==F & pop.1==T, a.2 + b.2*time + c.2*log(time+1) + d.2/(time+1) + eij, # Chirwa
-                                  ifelse(boys==T & pop.1==F, a.1 + b.1*t.star + c.1*log(t.star) + d.1/t.star + eij, #Pizzi
-                                         ifelse(boys==F & pop.1==F, a.2 + b.2*t.star + c.2*log(t.star) + d.2/t.star + eij, # Pizzi
-                                                NA))))
+            yij.2 = ifelse(boys==T, a.1 + b.1*t.star + c.1*log(t.star) + d.1/t.star + eij, #Pizzi
+                           ifelse(boys==F, a.2 + b.2*t.star + c.2*log(t.star) + d.2/t.star + eij, # Pizzi
+                                  NA))
+            
             
             time.2 = log(time+1)
             time.3 = 1/(time+1)
@@ -237,7 +260,7 @@ levels(factor(vals.p$evals))
 
 vals.p = within(vals.p, {
   gender.f = factor(gender, labels=c("Male", "Female"))
-  params.f = factor(params, labels=c("South Africa", "Malawi", "Portugal", "Italy", "Chile"))
+  params.f = factor(params, labels=c("Portugal", "Italy", "Chile"))
   sigma.f = factor(sig, labels=c("0.75"))
   evals.f = factor(evals, labels=c("0, 0.5", 
                                    "-0.50 and 0.50", 
