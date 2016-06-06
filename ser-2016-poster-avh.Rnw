@@ -35,7 +35,7 @@
         style=numeric,
         hyperref=true,
         backend=bibtex,
-        maxbibnames=99,
+        maxbibnames=1,
         firstinits=true,
         uniquename=init,
         maxcitenames=2,
@@ -44,12 +44,13 @@
         doi=true,
         isbn=false,
         eprint=false,
-        backref=true,
-            }   {biblatex}
+        backref=false,
+            }{biblatex}
 % see the following link for info on biblatex sort order issue: 
 % http://tex.stackexchange.com/questions/51434/biblatex-citation-order
 \usepackage[natbib=true, sorting=none, style=numeric, backend=bibtex]{biblatex}
 \addbibresource{bib2}
+\renewcommand*{\bibfont}{\scriptsize}
 
 %\usepackage{fontspec} % have to compile with XeLaTeX
 %\setmainfont{Arial}
@@ -160,7 +161,7 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
          
          \small{
           \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-                \item[\colouredcircle] Growth trajectory parameters for baseline exposure correspond to published estimates for three samples: Italy, Portugal and Chile (1).
+                \item[\colouredcircle] Growth trajectory parameters for baseline exposure correspond to published estimates for three samples: Italy, Portugal and Chile \cite{pizzi_prenatal_2014}.
                 \end{itemize}
                 }
          
@@ -303,21 +304,21 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
         \begin{block}{Conclusions}
           \small
           \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-            \item Each measure examined in this project, Z-scores, percentiles and crude weight measures, serves a purpose as needed in research. However, these outcomes in growth trajectory analyses are not equivalent, and if not applied properly can have adverse effects.
-            
-            \item[]
+            \item Each measure examined in this project, Z-scores, percentiles and crude weight measures, serves a purpose as needed in research. However, these outcomes in growth trajectory analyses are not equivalent, and if used incorrrectly can have adverse effects.
             \item[\colouredcircle] Even at similar age and gender values, reference to a standard, such as Z-scores, is not equivalent to crude weight values when assessing group differences in weight change over time. Evidence from these simulations supports this conclusion, with parameter estimates only coinciding under certain conditions -- equivalence at baseline.
-            \item[]
-            \item[\colouredcircle] If comparisons to a referent such as WHO are not an objective, use of Z-scores instead of crude weight can lead to
+              \begin{itemize}[align=left, labelindent=2pt,leftmargin=!]
+                \item[$\Rightarrow$] Special attention needed when interpreting standardized measures in longitudinal models
+              \end{itemize}
+              
+          \item[\colouredcircle] If comparisons to a referent such as WHO are not an objective, use of Z-scores instead of crude weight can lead to
             \begin{itemize}[align=left, labelindent=2pt,leftmargin=!]
               \item[$\Rightarrow$] biased estimates and conflicting inference.
               \item[$\Rightarrow$] lower power and inflated type I error.
               \end{itemize}
-              \item[]
-            \item[\colouredcircle] This finding reproduces similar work in an adolescent context. Also can extend to other contexts beside group comparisons in infant growth. 
-            \begin{itemize}[align=left, labelindent=2pt,leftmargin=!]
-              \item[$\Rightarrow$] Special attention needed when interpreting standardized measures in longitudinal models
-              \end{itemize}
+              
+            \item[\colouredcircle] This finding replicates similar work with adolescents \cite{berkey_adiposity_2007}. 
+            
+            \item[\colouredcircle] \textbf{Future efforts}: How does this finding extend to other contexts beside group comparisons in infant growth?
             \end{itemize}
 
         \end{block}
@@ -328,8 +329,10 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
         % 3-3
         % -----------------------------------------------------------
         \begin{block}{References}
-          \small
-          (1) \scriptsize{\fullcite{pizzi_prenatal_2014}}
+          \scriptsize{
+          \printbibliography{}}
+
+%          (1) \scriptsize{\fullcite{pizzi_prenatal_2014}}
           % see https://en.wikibooks.org/wiki/LaTeX/Fonts
         \end{block}
 
