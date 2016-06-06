@@ -134,7 +134,7 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
             \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
                 \item[\colouredcircle] Growth trajectory characteristics are frequently used in life course analyses as an exposure through which later life adverse outcomes, such as cardiovascular disease, are linked.
             
-            \item[\colouredcircle] Z-scores are a frequent outcome choice when modeling weight growth trajectories. \textbf{Advantages} include linear sex- and age- independent measures of weight outcomes. \textbf{Disadvantage} is measure meant for cross-sectional use.
+            \item[\colouredcircle] Z-scores are a frequent outcome choice when modeling weight growth trajectories. \textbf{Advantages} include linear sex- and age- independent measures of weight outcomes. \textbf{Disadvantage} is measure designed for cross-sectional use.
             \item[\colouredcircle] Advantages of a standardized measure, such as Z-scores, are unclear in postnatal longitudinal analyses when compared to crude measure of weight.
             \end{itemize}
             }
@@ -300,35 +300,21 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
         % -----------------------------------------------------------
         % 3-2
         % -----------------------------------------------------------
-        \begin{block}{Summary}
-          \small
-          
-          \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-          \item[\textbf{Z-scores or percentiles:}]
-            \begin{itemize}
-              \item These measures provide a measure of weight relative to a referent population.
-              \item[\colouredcircle] Trajectory group differences using Z-scores or percentiles as outcomes can lead to estimates in opposite direction compared crude weight outcomes.
-              \item[\colouredcircle] Using these measures also leads to lower power to detect differences in slope and inflated type I error. 
-             \end{itemize}
-          \end{itemize}
-        
-        \end{block}
-        \vskip1ex
-        \vfill
-
-        % -----------------------------------------------------------
-        % 3-3
-        % -----------------------------------------------------------
         \begin{block}{Conclusions}
           \small
           \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-            \item[\colouredcircle] Reference to a standard, such as Z-scores, is not equivalent to crude weight values when assessing group differences in change over time. Evidence from these simulations supports this conclusion, with parameter estimates only coinciding under certain conditions -- equivalence at baseline.
-            \item[\colouredcircle] If comparisons to a referent such as WHO is not an objective,
+            \item Each measure examined in this project, Z-scores, percentiles and crude weight measures, serves a purpose as needed in research. However, these outcomes in growth trajectory analyses are not equivalent, and if not applied properly can have adverse effects.
+            
+            \item[]
+            \item[\colouredcircle] Even at similar age and gender values, reference to a standard, such as Z-scores, is not equivalent to crude weight values when assessing group differences in weight change over time. Evidence from these simulations supports this conclusion, with parameter estimates only coinciding under certain conditions -- equivalence at baseline.
+            \item[]
+            \item[\colouredcircle] If comparisons to a referent such as WHO are not an objective, use of Z-scores instead of crude weight can lead to
             \begin{itemize}[align=left, labelindent=2pt,leftmargin=!]
-              \item[$\Rightarrow$] Z-scores can lead to biased estimates and conflicting inference.
-              \item[$\Rightarrow$] Z-score outcome associated with lower power and  inflated type I error.
+              \item[$\Rightarrow$] biased estimates and conflicting inference.
+              \item[$\Rightarrow$] lower power and inflated type I error.
               \end{itemize}
-            \item[\colouredcircle] This finding can extend to other contexts beside group comparisons in infant growth. 
+              \item[]
+            \item[\colouredcircle] This finding reproduces similar work in an adolescent context. Also can extend to other contexts beside group comparisons in infant growth. 
             \begin{itemize}[align=left, labelindent=2pt,leftmargin=!]
               \item[$\Rightarrow$] Special attention needed when interpreting standardized measures in longitudinal models
               \end{itemize}
@@ -339,7 +325,7 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
         \vfill
         
         % -----------------------------------------------------------
-        % 3-4
+        % 3-3
         % -----------------------------------------------------------
         \begin{block}{References}
           \small
