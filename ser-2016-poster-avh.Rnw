@@ -135,7 +135,7 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
             \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
                 \item[\colouredcircle] Growth trajectory characteristics are frequently used in life course analyses as an exposure through which later life adverse outcomes, such as cardiovascular disease, are linked.
             
-            \item[\colouredcircle] Z-scores are a frequent outcome choice when modeling weight growth trajectories. \textbf{Advantages} include linear sex- and age- independent measures of weight outcomes. \textbf{Disadvantage} is measure designed for cross-sectional use.
+            \item[\colouredcircle] Z-scores are a frequent outcome choice when modeling weight growth trajectories. \textbf{Advantages} include sex- and age- independent dimensionless measures. \textbf{Disadvantage} is measure designed for cross-sectional use.
             \item[\colouredcircle] Advantages of a standardized measure, such as Z-scores, are unclear in postnatal longitudinal analyses when compared to crude measure of weight.
             \end{itemize}
             }
@@ -148,7 +148,7 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
         \begin{block}{Aim}
             \small{
              \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-                \item[\colouredcircle] Estimate group differences in postnatal weight change across three different outcomes and three models and assess precision, type I error and parameter estimate values via Monte Carlo simulations.
+                \item[\colouredcircle] Estimate group differences in postnatal weight change across three different outcomes and three models to assess precision, type I error and parameter estimate values via Monte Carlo simulations.
                 \end{itemize}
                 }
             \end{block}
@@ -177,42 +177,34 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
         
         \small
           \begin{itemize}[align=left, labelindent=0.5pt,leftmargin=!]
-                \item[\colouredcircle] We generated fixed effects infant growth data with a Reed first order parametric model (\textbf{Source}): $y_{ij} = \beta_0 + \beta_1 \cdot \texttt{t} + \beta_2 \cdot \texttt{ln}(\texttt{t}_{ij}) + \displaystyle\frac{\beta_3}{\texttt{t}_{ij}} + \beta_4 \cdot \texttt{group}_i + \beta_5 \cdot \texttt{t} \cdot \texttt{group}_i + e_{ij}$ % Note: see mixsim.growth-8-sim-subset-redo.R
+          
+            \item[\colouredcircle] We generated fixed effects infant growth data with a Reed first order parametric model (\textbf{Source}): $y_{ij} = \beta_0 + \beta_1 \cdot \texttt{t}_{ij} + \beta_2 \cdot \texttt{ln} (\texttt{t}_{ij}) + \displaystyle\frac{\beta_3}{\texttt{t}_{ij}} + \beta_4 \cdot \texttt{group}_i + \beta_5 \cdot \texttt{t}_{ij} \cdot \texttt{group}_i + e_{ij}$ % Note: see mixsim.growth-8-sim-subset-redo.R
 
-%\noindent\rule{20cm}{0.4pt}
+\vskip-0.2em
+\noindent\rule{20cm}{0.4pt}
 
         \item[\colouredcircle] After simulating weight values, we converted simulated weight to Z-score and percentiles and fit three models:
-        \end{itemize}
-        
-        \begin{itemize}[align=left, labelindent=0.5pt,leftmargin=!]
-        
-          \item[\textbf{Model 1}] \small $E(m_{ij}) = \beta_0 + \beta_1 \cdot \texttt{t} + \beta_2 \cdot \texttt{group} + \beta_3 \cdot \texttt{t} \cdot \texttt{group}$
+          \item[\colouredcircle] \textbf{Model 1}: $E(m_{ij}) = \beta_0 + \beta_1 \cdot \texttt{t} + \beta_2 \cdot \texttt{group} + \beta_3 \cdot \texttt{t} \cdot \texttt{group}$
 %Linear regression with first order term for time: 
 
-          \item[\textbf{Model 2}] \small $E(m_{ij}) = \beta_0 + \beta_1 \cdot \texttt{t} + \beta_2 \cdot \texttt{group} + \beta_3 \cdot \texttt{t} \cdot \texttt{group} + \beta_4 \cdot \texttt{t}^2$
+          \item[\colouredcircle] \textbf{Model 2} $E(m_{ij}) = \beta_0 + \beta_1 \cdot \texttt{t} + \beta_2 \cdot \texttt{group} + \beta_3 \cdot \texttt{t} \cdot \texttt{group} + \beta_4 \cdot \texttt{t}^2$
 %Linear regression with second order term for time: 
 
-          \item[\textbf{Model 3}] 
-          \begin{itemize}
-            \item[]
-            \item[] \small $E(m_{ij}) = \beta_0 + \beta_1 \cdot \texttt{month6} + \beta_2 \cdot \texttt{group} + \beta_3 \cdot \texttt{month6} \cdot \texttt{group}$
-          \end{itemize}
+          \item[\colouredcircle] \textbf{Model 3} \small $E(m_{ij}) = \beta_0 + \beta_1 \cdot \texttt{month6} + \beta_2 \cdot \texttt{group} + \beta_3 \cdot \texttt{month6} \cdot \texttt{group}$
         \item[\textbf{Model Terms}]
-           %\begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-           \begin{labeling}{month.6} %https://en.wikibooks.org/wiki/LaTeX/List_Structures
+        
+           \begin{labeling}{month6} %https://en.wikibooks.org/wiki/LaTeX/List_Structures
             \item []
-            \item [\bm{$y_{ij}$}] \footnotesize weight for person $i$ and time $j$, age (months)
+            \item [\bm{$y_{ij}$}] \footnotesize weight for person $i$ and time $j$
+            \item [\bm{$t$}] \footnotesize age (months)
             \item [\bm{$m_{ij}$}] \footnotesize weight, Z-score, percentile for person $i$ and time $j$
             \item [\textbf{group}]  \footnotesize a binary exposure factor
             \item [\textbf{month6}] \footnotesize a binary variable for time with 1=month 6 and 0=month 0
-            \item [\bm{$e_{ij}$}] \footnotesize error term with variance following an autocorrelation structure, $\rho$=0.5 and $\sigma$=0.75
-          %\end{itemize}
+            \item [\bm{$e_{ij}$}] \footnotesize error term with covariance following an autocorrelation structure, $\rho$=0.5 and $\sigma$=0.75
           \end{labeling}
     
-%ANOVA model (month 6 versus month 0): 
         \end{itemize}
         
-
         \end{block}
         \vskip1ex
         
@@ -280,7 +272,7 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
               \end{itemize}
 
           \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-            \item[\textbf{Type I error}] Crude weight measure closest to nominal Type I error of 0.05.
+            \item[\textbf{Type I error}] Crude weight measure closest to nominal type I error of 0.05.
               \begin{itemize}
                 \item[\colouredcircle] Z-scores have greatest type I error for models 1 and 2.
                 \end{itemize}
@@ -305,18 +297,18 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
           \small
           \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
             \item Each measure examined in this project, Z-scores, percentiles and crude weight measures, serves a purpose as needed in research. However, these outcomes in growth trajectory analyses are not equivalent, and if used incorrrectly can have adverse effects.
-            \item[\colouredcircle] Even at similar age and gender values, reference to a standard, such as Z-scores, is not equivalent to crude weight values when assessing group differences in weight change over time. Evidence from these simulations supports this conclusion, with parameter estimates only coinciding under certain conditions -- equivalence at baseline.
+            \item[\colouredcircle] Even at similar age and gender values, reference to a standard, WHO Z-scores, is not equivalent to crude weight values when assessing group differences in weight change over time.             \item[\colouredcircle] Supporting this conclusion, estimated group differences in weight change for all three outcomes only coincide in direction under certain conditions -- equivalent weight at baseline.
               \begin{itemize}[align=left, labelindent=2pt,leftmargin=!]
-                \item[$\Rightarrow$] Special attention needed when interpreting standardized measures in longitudinal models
+                \item[$\Rightarrow$] Special attention needed when interpreting standardized measures in longitudinal models. What is your target population?
               \end{itemize}
               
-          \item[\colouredcircle] If comparisons to a referent such as WHO are not an objective, use of Z-scores instead of crude weight can lead to
+          \item[\colouredcircle] If comparisons to a standard such as WHO are not an objective, using Z-scores instead of crude weight can lead to
             \begin{itemize}[align=left, labelindent=2pt,leftmargin=!]
               \item[$\Rightarrow$] biased estimates and conflicting inference.
               \item[$\Rightarrow$] lower power and inflated type I error.
               \end{itemize}
               
-            \item[\colouredcircle] This finding replicates similar work with adolescents \cite{berkey_adiposity_2007}. 
+            \item[\colouredcircle] Findings replicate lower power found in adolescent age group \cite{berkey_adiposity_2007}. 
             
             \item[\colouredcircle] \textbf{Future efforts}: How does this finding extend to other contexts beside group comparisons in infant growth?
             \end{itemize}
@@ -329,10 +321,10 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
         % 3-3
         % -----------------------------------------------------------
         \begin{block}{References}
-          \scriptsize{
-          \printbibliography{}}
-
-%          (1) \scriptsize{\fullcite{pizzi_prenatal_2014}}
+          %\scriptsize{%          \printbibliography{}}
+          \scriptsize
+          (1) \fullcite{pizzi_prenatal_2014} \\
+          (2) \fullcite{berkey_adiposity_2007}
           % see https://en.wikibooks.org/wiki/LaTeX/Fonts
         \end{block}
 
