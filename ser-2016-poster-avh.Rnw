@@ -133,10 +133,10 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
         
           \small{
             \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-                \item[\colouredcircle] Growth trajectory characteristics are frequently used in life course analyses as an exposure through which later life adverse outcomes, such as cardiovascular disease, are linked.
+                \item[\colouredcircle] Postnatal growth trajectory characteristics play an important role in life course analyses, and differences in growth according to prenatal exposures is one frequently used analytic approach.
             
-            \item[\colouredcircle] Z-scores are a frequent outcome choice when modeling weight growth trajectories. \textbf{Advantages} include sex- and age- independent dimensionless measures. \textbf{Disadvantage} is measure designed for cross-sectional use.
-            \item[\colouredcircle] Advantages of a standardized measure, such as Z-scores, are unclear in postnatal longitudinal analyses when compared to crude measure of weight.
+            \item[\colouredcircle] Z-scores are a frequent outcome choice when modeling weight growth trajectories. \textbf{Advantages} include sex- and age- independent measures free of dimension. \textbf{Disadvantage} is measure designed for cross-sectional use.
+            \item[\colouredcircle] Compared to crude measures of weight, the advantages of standardized measures, such as Z-scores, are unclear.
             \end{itemize}
             }
         \end{block}
@@ -236,7 +236,7 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
   
           \begin{figure}
           \centering
-          \caption{Comparison of power, type-I error and estimate for product term of time and exposure effect, $\beta_3$.}
+          \caption{Comparison of power, type-I error and estimated product term for time and exposure effect, $\beta_3$.}
           \includegraphics{plot-power.png} % see poster-results.Rmd file for code to create image
           \end{figure}
           
