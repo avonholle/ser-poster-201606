@@ -6,7 +6,7 @@
 %
 % NOTE: See rice-sample.tex written by Daina Chiba at Rice University for formatting and preamble code that I copied, http://ricebeamer.dynaman.net/
 \documentclass[final]{beamer}
-\usepackage[orientation=landscape, size=custom, width=107, height=107, scale=1.7]{beamerposter}  % this matches 42 by 42 inches.
+\usepackage[orientation=landscape, size=custom, width=106.68, height=106.68, scale=1.7]{beamerposter}  % this matches 42 by 42 inches.
 \mode<presentation>{\usetheme{UNC5}}
 \usepackage[english]{babel}
 \usepackage[latin1]{inputenc}
@@ -133,7 +133,7 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
         
           \small{
             \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-                \item[\colouredcircle] Postnatal growth trajectory characteristics play an important role in life course analyses, and one common analytic approach is to assess differences in growth according to prenatal exposures.
+                \item[\colouredcircle] Postnatal growth trajectory characteristics play an important role in life course analyses, and one common analytic approach is to assess growth differences according to prenatal exposures.
             
             \item[\colouredcircle] Z-scores are a frequent outcome choice when modeling weight growth trajectories. \textbf{Advantages} include sex- and age- independent measures free of dimension. \textbf{Disadvantage} is measure designed for cross-sectional use.
             \item[\colouredcircle] Compared to crude measures of weight, the advantages of standardized measures, such as Z-scores, are unclear.
@@ -183,7 +183,7 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
 \vskip-0.2em
 \noindent\rule{20cm}{0.4pt}
 
-        \item[\colouredcircle] After simulating weight values (10,000 iterations), we converted weight to WHO Z-score and percentiles and fit three models:
+        \item[\colouredcircle] After simulating weight values (10,000 iterations) for four baseline weight and slope scenarios, we fit three models for each of the three outcomes and three samples:
         \vskip0.5em
           \item[\colouredcircle] \textbf{Model 1}
           $m_{ij} = \beta_0 + \beta_1 \cdot \texttt{t}_{ij} + \beta_2 \cdot \texttt{exp}_{i} + \beta_3 \cdot \texttt{t}_{ij} \cdot \texttt{exp}_{i} + \epsilon_{ij}$
@@ -204,7 +204,7 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
             \item []
             \item [\bm{$y_{ij}$}] \footnotesize weight for person $i$ and time $j$
             \item [\bm{$t$}] \footnotesize age (months)
-            \item [\bm{$m_{ij}$}] \footnotesize weight, Z-score, or percentile for person $i$ and time $j$
+            \item [\bm{$m_{ij}$}] \footnotesize weight, WHO Z-score based on simulated weight, or percentile for person $i$ and time $j$
             \item [\textbf{exp}]  \footnotesize a binary exposure factor
             \item [\textbf{m6}] \footnotesize a binary variable for time with 1=month 6 and 0=month 0
             \item [\bm{$e_{ij}$}] \footnotesize error term with covariance following an autocorrelation structure, $\rho$=0.5 and $\sigma$=0.75
@@ -272,21 +272,21 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
         \begin{block}{Results, cont \ldots}
         \small{
           \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-            \item[\textbf{Power}] Consistently greater with crude weight. 
+            \item[\textbf{Power:}] Consistently greater with crude weight. 
               \begin{itemize}
                 \item[\colouredcircle] Weight difference at baseline results in larger differential between crude and standardized.
                 \end{itemize}
               \end{itemize}
 
           \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-            \item[\textbf{Type I error}] Crude weight measure closest to nominal type I error of 0.05.
+            \item[\textbf{Type I error:}] Crude weight measure closest to nominal type I error of 0.05.
               \begin{itemize}
                 \item[\colouredcircle] Z-scores have greatest type I error for models 1 and 2.
                 \end{itemize}
               \end{itemize}
 
           \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-            \item[\textbf{Parameter estimates}] Baseline weight differences lead to opposite direction of effect for Z-score compared to crude weight outcomes.
+            \item[\textbf{Parameter estimates ($\hat\beta_3$):}] Baseline weight differences lead to opposite direction of effect, group difference in weight change over time, for Z-score compared to crude weight outcomes.
               \begin{itemize}
                 \item[\colouredcircle] No weight differences at baseline leads to similar estimates between Z-score and original weight outcomes.
                 \end{itemize}
@@ -303,13 +303,14 @@ opts_chunk$set(echo=FALSE, comment=NA, message=FALSE, results='asis', cache=TRUE
         \begin{block}{Conclusions}
           \small
           \begin{itemize}[align=left, labelindent=1pt,leftmargin=!]
-            \item Each measure examined in this project: Z-scores, percentiles and crude weight measures, serves a purpose. However, these outcomes in growth trajectory analyses are not equivalent, and if used incorrrectly can have adverse effects.
-            \item[\colouredcircle] Even at similar age and gender values, reference to a standard, WHO Z-scores, is not similar to crude weight values when assessing group differences in weight change over time.             \item[\colouredcircle] Supporting this conclusion, estimated group differences in weight change for all three outcomes only coincide in direction under certain conditions -- equivalent weight at baseline.
+            \item Each measure examined in this project: Z-scores, percentiles and crude weight measures, serves a purpose. However, these outcomes in growth trajectory analyses are not equivalent and if used incorrrectly can have adverse effects.
+            \item[\colouredcircle] Even at similar age and gender values, estimated group differences in weight change over time are not similar for standardized and crude weight outcomes.
+            \item[\colouredcircle] Supporting this conclusion, estimated group differences in weight change for all three outcomes only coincide in direction under certain conditions -- equivalent weight at baseline.
               \begin{itemize}[align=left, labelindent=2pt,leftmargin=!]
-                \item[$\Rightarrow$] Special attention needed when interpreting standardized measures in longitudinal models. What is your target population?
+                \item[$\Rightarrow$] Special attention needed when interpreting standardized measures in longitudinal models, i.e. what is the appropriate target population?
               \end{itemize}
               
-          \item[\colouredcircle] If comparisons to a standard such as WHO are not an objective, using Z-scores instead of crude weight can lead to
+          \item[\colouredcircle] If comparisons to a standard are not an objective, using Z-scores instead of crude weight can lead to
             \begin{itemize}[align=left, labelindent=2pt,leftmargin=!]
               \item[$\Rightarrow$] biased estimates and conflicting inference
               \item[$\Rightarrow$] lower power and inflated type I error
